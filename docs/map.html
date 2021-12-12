@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.background {
+  fill: #ADD8E6;
+  pointer-events: all;
+}
+.map-layer {
+  fill: #000;
+  stroke: '';
+}
+text.heading {
+    font-family: "Georgia";  
+    font-size: 30px;
+}
+text.big-text{
+  font-family: "Georgia";
+  font-size: 25px;
+}
+text.small-text{
+  font-family: "Optima";
+  font-size: 15px;
+}
+
+
+</style>
+<div style="text-align:center;"> 
+<text class="heading" > Motor Vehicle Collision Count in NYC</text>
+<p style="max-width:800px; margin-left: auto; margin-right: auto; text-align:justify;"> In this section, we have generated a choropleth map of New York City divided into boroughs. This choropleth map shows us the relative density of the number of collisions which have taken place in each borough. The map can be generated for 5 different scenarios based on the number of vehicles involved in the collision (1, 2, 3, 4 or 5). The choropleth map's colorscale is defined by interpolation from light yellow to dark green wherein <b>light yellow is the minimum value and dark green is the maximum value</b>. Every borough is colored using this colorscale based on the number of collisions that have occured in that borough.</p>
+<p style="max-width:800px; margin-left: auto; margin-right: auto; text-align:justify;"> Hovering over a certain borough highlights the region and displays the name of the borough on the top-left corner of the map. Clicking on a borough displays the number of accidents in the borough. Use the slider below to choose the number of vehicles involved in the accident.</p>
+<p>
+		No. of vehicles involved (1 to 5) :<br> 
+		<input id="vehicle_n" type="range" min="1" max="5" step="1" list = "steplist">
+<datalist id="steplist">
+			<option label = "1">1</option>
+			<option label = "2">2</option>
+			<option label = "3">3</option>
+			<option label = "4">4</option>
+			<option label = "5">5</option>
+</datalist>
+	</p>
+</div>
+
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v6.js"></script>
+        
+<!-- Create an element where the map will take place -->
+<div style="text-align:center;">
+<svg></svg>
+</div>
+<script>
+
+var width = 800,
+    height = 512,
+    centered;
+    
+// The svg
+const svg = d3.select('svg')
+  .attr('width', width)
+  .attr('height', height);
+
+// Add background
+svg.append('rect')
+  .attr('class', 'background')
+  .attr('width', width)
+  .attr('height', height);
+
+var g = svg.append('g');
+
+var mapLayer = g.append('g')
+  .classed('map-layer', true);    
+
+var bigText = g.append('text')
+  .classed('big-text', true)
+  .attr('x', 20)
+  .attr('y', 45);
+
+var smallText = g.append('text')
+  .classed('small-text', true)
+  .attr('x', 20)
+  .attr('y', 75);
+    
+// Map and projection
+const projection = d3.geoMercator()
+    .scale(45000)
+    .center([-73.935242, 40.730610])
+    .translate([width / 2, height / 2])
+
+var path = d3.geoPath().projection(projection)
+
+var count_0 = [1675, 1413, 2393, 1682, 273];
+
+var count_1 = [40389,38674,72205,57522,10154];
+
+var count_2 = [239821,132491,297202, 256989, 39232];
+
+var count_3 = [8137,7808, 19692, 17441, 2987];
+
+var count_4 = [1899, 1193, 4600, 3680, 534];
+
+var count_5 = [737,  447, 1930, 1381,131];
+
+
+function choose_list(x) {
+  if (x == 0) {
+    return count_0
+  }
+  else if (x == 1) {
+    return count_1
+  }
+  else if (x == 2) {
+    return count_2
+  }
+  else if (x == 3) {
+    return count_3
+  }
+  else if (x == 4) {
+    return count_4
+  }
+  else if (x == 5) {
+    return count_5
+  }
+}
+
+// Load external data and boot
+
+d3.json("https://raw.githubusercontent.com/arunitmaity/Motor-Vehicle-Crash-Analysis/main/Borough%20Boundaries.geojson").then(function(info) {
+    // Draw the map
+    mapLayer.selectAll("path")
+        .data(info.features)
+        .join("path")
+        .attr('d', path)
+        .attr('vector-effect', 'non-scaling-stroke')
+        .style('fill', fillFn)
+        .on('mouseover', mouseover)
+        .on('mouseout', mouseout)
+        .on('click', clicked)
+});
+
+d3.select('#vehicle_n').on("change", function() {
+d3.json("https://raw.githubusercontent.com/arunitmaity/Motor-Vehicle-Crash-Analysis/main/Borough%20Boundaries.geojson").then(function(info) {
+    // Draw the map
+    mapLayer.selectAll("path")
+        .data(info.features)
+        .join("path")
+        .attr('d', path)
+        .attr('vector-effect', 'non-scaling-stroke')
+        .style('fill', fillFn)
+        .on('mouseover', mouseover)
+        .on('mouseout', mouseout)
+        .on('click', clicked)
+})});
+
+function colorfill (d, data) {
+  var count = choose_list(document.getElementById("vehicle_n").value)
+  var sequentialScale = d3.scaleSequential()
+  .domain([Math.min(...count), Math.max(...count)])
+	.interpolator(d3.interpolateYlGn);
+	return sequentialScale(count[d.properties.boro_code-1])
+}
+
+// Get province color
+function fillFn(d, data){
+  var val = choose_list(d.properties.boro_code)
+  return colorfill(d, data)
+}
+
+function clicked(d, data) {
+  // Highlight the clicked province
+  d3.select(this).style('fill', 'darkblue');
+//  console.log(document.getElementById("vehicle_n").value)
+  var count = choose_list(document.getElementById("vehicle_n").value)
+  bigText.text(data.properties.boro_name);
+  smallText.text('Accident Count : ' + count[data.properties.boro_code-1])
+}
+
+function mouseover(d, data){
+  // Highlight hovered province
+    d3.selectAll("path")
+      .transition()
+      .duration(250)
+      .style("opacity", .4);  
+      
+  d3.select(this)     
+  .transition()
+  .duration(250)
+  .style("opacity", 1);
+  
+  bigText.text(data.properties.boro_name);
+}
+
+function mouseout(d){
+  // Reset province color
+    
+    d3.selectAll("path")
+      .style('fill', fillFn)
+      .transition()
+      .duration(150)
+      .style("opacity", 1)
+    
+    bigText.text('');
+    smallText.text('')
+
+}
+
+</script>
