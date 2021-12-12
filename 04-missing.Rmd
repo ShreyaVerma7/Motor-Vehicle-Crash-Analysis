@@ -1,1 +1,317 @@
-# Missing values
+# Missing Values
+
+```{r, include = FALSE, echo = FALSE, results = 'hide'}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, echo = FALSE, results = 'hide')
+```
+
+## Missing Values Analysis for Motor Vehicle Crash Analysis
+
+```{r}
+library(Lock5withR)
+library(tidyverse)
+library(patchwork)
+library(ggplot2)
+library(ggnewscale)
+```
+
+
+```{r}
+# Loading Motor Vehicle Collisions Crashes data
+data <- read.csv(file = 'Motor_Vehicle_Collisions_Crashes.csv', na.strings = c("", "NA", " "))
+#data
+```
+
+### Missing values by column
+```{r}
+temp <- colSums(is.na(data)) %>% sort(decreasing = TRUE) %>% data.frame()
+print(temp)
+```
+We focus only on the 20 column values with missing data for the rest of our missing value analysis (to improve graph readability).
+
+```{r}
+new_data <- data[rownames(temp)[1:20]]
+# names(new_data) <- abbreviate(names(new_data), minlength=2)
+#new_data
+```
+
+### Bar Plot to show number of missing values by Borough
+
+```{r}
+na_by_b <- new_data[!complete.cases(new_data), ] %>% 
+  group_by(BOROUGH) %>% 
+  summarize(count = n()) %>% 
+  mutate(percentage = count/sum(count)*100)
+na_by_b 
+```
+
+```{r}
+ggplot(na_by_b, aes(x =reorder(BOROUGH, -count), y = count)) +
+  geom_col(color = "blue", fill = "lightblue") +
+  ggtitle("Number of missing values by Borough") +
+  xlab("Borough Names") +
+  ylab("Number of missing values") +
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+The graph above plots the number of missing values for each given Borough. When Borough values aren't available (NA value) then the chances of other information in about the accident being available is also low. 
+
+
+## Missing Value Analysis for Missing Value Patterns plot in all data of vehicles involved in a collision
+
+
+### Missing Pattern Plot Function 
+
+```{r}
+plot_missing <- function(data, percent = FALSE) {
+  
+  missing_patterns <- data.frame(is.na(data)) %>%
+  group_by_all() %>%
+  count(name = "count", sort = TRUE) %>%
+  ungroup() %>% data.frame()
+  missing_patterns <- missing_patterns[order(missing_patterns$count,decreasing = TRUE), ]
+  missing_patterns
+  
+  clr_fill = c()
+  row_number = -1
+  for (row in 1:nrow(missing_patterns)) {
+    c = 0
+    for (col in 1:ncol(data)) {
+      if (missing_patterns[row, col] == 'TRUE') {
+        c = 1
+      }
+    }
+    if (c==1) {
+      clr_fill <- c(clr_fill, 'darkviolet')
+    }
+    else {
+      clr_fill <- c(clr_fill, 'lightblue')
+      row_number = row
+    }
+  }
+  
+  if (percent == FALSE) {
+    temp <- colSums(is.na(data)) %>%
+    sort(decreasing = TRUE) %>%
+    data.frame()
+  }
+  else {
+    temp <- colSums(is.na(data)) %>%
+    sort(decreasing = TRUE) %>%
+    data.frame()    
+    temp = temp/nrow(data)*100
+  }
+  
+# Plotting Q1 & Q2
+  
+  if (percent == FALSE) {
+    q1 <- ggplot(temp, aes(x=rownames(temp), y=temp[,1])) +
+    geom_bar(stat = 'identity', fill = 'darkviolet') +
+    ylab('Num Rows Missing:') +
+    scale_x_discrete(limits = rownames(temp)) +
+    xlab('') +
+    ggtitle('Missing Value Patterns') +
+    theme_minimal()
+    
+    q2 <- ggplot(missing_patterns, aes(x=rownames(missing_patterns), y=count/sum(missing_patterns['count'])*100)) +
+    scale_x_discrete(limits = rev(rownames(missing_patterns))) +
+    geom_bar(stat = 'identity', show.legend = FALSE, fill = clr_fill) +
+    ylab('Row Count') +
+    xlab('') +
+    theme_minimal() +
+    coord_flip()
+  }
+  else {
+    q1 <- ggplot(temp, aes(x=rownames(temp), y=temp[,1])) +
+    geom_bar(stat = 'identity', fill = 'darkviolet') +
+    ylab('% Rows Missing:') +
+    scale_x_discrete(limits = rownames(temp)) +
+    xlab('') +
+    ylim(0,100) +
+    ggtitle('Missing Value Patterns') +
+    theme_minimal()
+    
+    q2 <- ggplot(missing_patterns, aes(x=rownames(missing_patterns), y=count/sum(missing_patterns['count'])*100)) +
+    scale_x_discrete(limits = rev(rownames(missing_patterns))) +
+    geom_bar(stat = 'identity', show.legend = FALSE, fill = clr_fill) +
+    ylab('% Rows') +
+    ylim(0,100) +
+    xlab('') +
+    theme_minimal() +
+    coord_flip()
+  }
+  
+# Plotting Q3
+  if (row_number != -1) {
+    tidydata <- missing_patterns[, c(1: ncol(data))] %>% 
+    rownames_to_column("id") %>% 
+    gather(key, value, -id) 
+    
+    fill_pattern = matrix(1, nrow = dim(missing_patterns)[1]*(ncol(data)), ncol = 1)
+
+    for (row in 1:nrow(tidydata)) {
+      if (tidydata[row, 'id']==row_number) {
+        fill_pattern[row] = "found"
+      }
+    }
+    
+    mycol <- rgb(255, 255, 255, max = 255, alpha = 255)
+
+    q3 <- ggplot(tidydata, aes(x = key, y = fct_rev(id))) +
+      scale_x_discrete(limits = rownames(temp)) +
+      scale_y_discrete(limits = rev(rownames(missing_patterns))) +
+      geom_tile(aes(fill = value), color = "black", show.legend = FALSE, alpha = 0.9) +
+      scale_fill_manual(values = c("lightgrey", "violet")) +
+      new_scale("fill") +
+      geom_tile(aes(fill = fill_pattern), color = "black", show.legend = FALSE, alpha = 0.6) + 
+      scale_fill_manual(values = c(mycol, "darkgrey")) +
+      xlab('Variable') +
+      ylab('Missing Pattern') +
+      annotate("text",
+              x = dim(data)[2] %/% 1.75,
+              y = nrow(missing_patterns) - row_number + 1,
+              label = "Complete Cases")
+      }
+  
+  else {
+    tidydata <- missing_patterns[, c(1: ncol(data))] %>% 
+    rownames_to_column("id") %>% 
+    gather(key, value, -id) 
+    
+    q3 <- ggplot(tidydata, aes(x = key, y = fct_rev(id))) +
+      scale_x_discrete(limits = rownames(temp)) +
+      scale_y_discrete(limits = rev(rownames(missing_patterns))) +
+      geom_tile(aes(fill = value), color = "black", show.legend = FALSE, alpha = 0.9) +
+      scale_fill_manual(values = c("lightgrey", "violet")) +
+      xlab('Variable') +
+      ylab('Missing Pattern')
+  }
+  (q1 + plot_spacer()+plot_layout(widths= c(2.5, 1))) / (q3 + q2+plot_layout(widths= c(3, 1))) + plot_layout(heights= c(1, 3))
+}
+```
+
+
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(new_data, percent = FALSE)
+```
+
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(new_data, percent = TRUE)
+```
+
+When considering all of the data, information of the 4th and 5th vehicle is missing maximum number of times because it *may not* be too frequent to have a 5 or 4 car collision.
+Therefore, to better understand about the missing values (and the combinations in which they may be frequent) in the data set, we plot the missing value patterns for each of the 5, 4, 3, 2, and 1 vehicle collisions. 
+
+### Missing Value Patterns plot for Vehicles involved in 5 vehicle collisions
+
+```{r}
+temp5 <- colSums(is.na(new_data[!is.na(new_data$VEHICLE.TYPE.CODE.5), ])) %>% sort(decreasing = TRUE) %>% data.frame()
+x5 <- new_data[!is.na(new_data$VEHICLE.TYPE.CODE.5), ]
+temp5_data <- x5[rownames(temp5)[1:13]]
+```
+
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp5_data, percent = FALSE)
+```
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp5_data, percent = TRUE)
+```
+
+Majority of the data entries (with 40+ entries) only missed on the Off Street name entry. The second most missed combination of entries are the address related entries i.e. Off Street name, Cross Street name, Zip Code, and Borough.
+
+### Missing Value Patterns plot for Vehicles involved in 4 vehicle collisions
+
+```{r}
+drop_col = c('VEHICLE.TYPE.CODE.5','CONTRIBUTING.FACTOR.VEHICLE.5') #in a 4 vehicle collision there is no 5th vehicle
+new_data <- new_data[,!names(new_data)%in%drop_col]
+temp4 <- colSums(is.na(new_data[!is.na(new_data$VEHICLE.TYPE.CODE.4), ])) %>% sort(decreasing = TRUE) %>% data.frame()
+x4 <- new_data[!is.na(new_data$VEHICLE.TYPE.CODE.4), ]
+
+temp4_data <- x4[rownames(temp4)[1:14]]
+```
+
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp4_data, percent = FALSE)
+
+```
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp4_data, percent = TRUE)
+
+```
+
+Majority of the data entries (with 40+ entries) only missed on the Off Street name entry. The second most missed combination of entries are the address related entries i.e. Off Street name, Cross Street name, Zip Code, and Borough.
+
+### Missing Value Patterns plot for Vehicles involved in 3 vehicle collisions
+
+
+```{r}
+drop_col = c('VEHICLE.TYPE.CODE.4','CONTRIBUTING.FACTOR.VEHICLE.4') #in a 3 vehicle collision there is no 4th and 5th vehicle
+new_data <- new_data[,!names(new_data)%in%drop_col]
+temp3 <- colSums(is.na(new_data[!is.na(new_data$VEHICLE.TYPE.CODE.3), ])) %>% sort(decreasing = TRUE) %>% data.frame()
+x3 <- new_data[!is.na(new_data$VEHICLE.TYPE.CODE.3), ]
+temp3_data <- x3[rownames(temp3)[1:11]]
+```
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp3_data, percent = FALSE)
+
+```
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp3_data, percent = TRUE)
+
+```
+
+Majority of the data entries (with 40+ entries) only missed on the Off Street name entry. The second most missed combination of entries are the address related entries i.e. Off Street name, Cross Street name, Zip Code, and Borough.
+
+### Missing Value Patterns plot for Vehicles involved in 2 vehicle collisions
+
+```{r}
+drop_col = c('VEHICLE.TYPE.CODE.3','CONTRIBUTING.FACTOR.VEHICLE.3') #in a 2 vehicle collision there is no 3rd, 4th and 5th vehicle
+new_data <- new_data[,!names(new_data)%in%drop_col]
+temp2 <- colSums(is.na(new_data[!is.na(new_data$VEHICLE.TYPE.CODE.2), ])) %>% sort(decreasing = TRUE) %>% data.frame()
+x2 <- new_data[!is.na(new_data$VEHICLE.TYPE.CODE.2), ]
+temp2_data <- x2[rownames(temp2)[1:13]]
+```
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp2_data, percent = FALSE)
+
+```
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp2_data, percent = TRUE)
+
+```
+
+Since only 2 vehicle is involved in the collision, its documentation has complete case instance too. Even otherwise, majority of the data entries only missed on the Off Street name entry (40+ times). The second most missed combination of entries are the address related entries i.e. Off Street name, Cross Street name, Zip Code, and Borough.
+
+### Missing Value Patterns plot for Vehicles involved in 1 vehicle collision
+
+
+```{r}
+drop_col = c('VEHICLE.TYPE.CODE.2','CONTRIBUTING.FACTOR.VEHICLE.2') #in a 1 vehicle collision there is no 2nd, 3rd, 4th, and 5th vehicle
+new_data <- new_data[,!names(new_data)%in%drop_col]
+temp1 <- colSums(is.na(new_data[!is.na(new_data$VEHICLE.TYPE.CODE.1), ])) %>% sort(decreasing = TRUE) %>% data.frame()
+x1 <- new_data[!is.na(new_data$VEHICLE.TYPE.CODE.1), ]
+temp1_data <- x1[rownames(temp1)[1:11]]
+```
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp1_data, percent = FALSE)
+```
+
+```{r, fig.height=20, fig.width=40}
+plot_missing(temp1_data, percent = TRUE)
+```
+
+Since only 1 vehicle is involved in the collision, its documentation has complete case instance too. Here also, even otherwise, majority of the data entries only missed on the Off Street name entry (40+ times). The second most missed combination of entries are the address related entries i.e. Off Street name, Cross Street name, Zip Code, and Borough.
+
+## Final Inference from above graphs
+
+The common inference across all graphs is that 40+ instances of Off Street are not present in any records of the collisions. Further, the second most missed combination of entries are the address related entries i.e. Off Street name, Cross Street name, Zip Code, and Borough also occurs across all types of collisions (based on the number of vehicles involved).

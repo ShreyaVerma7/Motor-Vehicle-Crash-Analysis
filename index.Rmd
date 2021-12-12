@@ -1,9 +1,21 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "Motor Vehicle Crash Analysis"
+author: "Arunit Maity, Sarthak Bhargava, Shreya Verma"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
 # Introduction
 
+According to New York State's Department of Health, motor vehicle traffic crashes are one of the leading causes of injury related death or hospitalization for residents of New York City. Other than homicides, the fatal incidents in which NYPD has the most contact with the public are fatal traffic collisions. An alarming fact is that traffic is the top injury-related cause of death of children in NYC. Thus it is imperative to analyse all the data available on motor vehicle collisions in NYC in order to draw helpful insights to curb the number of fatalities.
+
+Through this project, our goal is to answer the following questions with the help of Exploratory Data Analysis and Visualization:
+
+* What time during the day has majority of accidents? Medical Services and the NYPD could be more vigilant at this time.
+* Which localities are most accident-prone? 
+* Which areas are most dangerous for pedestrians at night-time? It would be wiser to avoid such areas. 
+* What are leading contributors to accidents in accident-prone areas? Also, which of these factors would lead to the most fatal accidents? 
+* What vehicle types are involved in the maximum number of fatal accidents? 
+* Analyzing data from 2012, was there a drop in the accidents in any area? Clearly, the measures taken to tackle accidents there would have worked and can be extended to other areas in need.
+
+We hope that such visualizations would enable us to draw inferences that will help reduce collisions on the road.
