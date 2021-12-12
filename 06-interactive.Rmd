@@ -1,2 +1,2 @@
 # Interactive component
-<iframe src="map.html" width="600" height="800"></iframe>
+<iframe src="map.html" width="700" height="800"></iframe>

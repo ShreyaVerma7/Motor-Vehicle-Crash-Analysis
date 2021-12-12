@@ -26,8 +26,8 @@ text.small-text{
 </style>
 <div style="text-align:center;"> 
 <text class="heading" > Motor Vehicle Collision Count in NYC</text>
-<p style="max-width:800px; margin-left: auto; margin-right: auto; text-align:justify;"> In this section, we have generated a choropleth map of New York City divided into boroughs. This choropleth map shows us the relative density of the number of collisions which have taken place in each borough. The map can be generated for 5 different scenarios based on the number of vehicles involved in the collision (1, 2, 3, 4 or 5). The choropleth map's colorscale is defined by interpolation from light yellow to dark green wherein <b>light yellow is the minimum value and dark green is the maximum value</b>. Every borough is colored using this colorscale based on the number of collisions that have occured in that borough.</p>
-<p style="max-width:800px; margin-left: auto; margin-right: auto; text-align:justify;"> Hovering over a certain borough highlights the region and displays the name of the borough on the top-left corner of the map. Clicking on a borough displays the number of accidents in the borough. Use the slider below to choose the number of vehicles involved in the accident.</p>
+<p style="max-width:512px; margin-left: auto; margin-right: auto; text-align:justify;"> In this section, we have generated a choropleth map of New York City divided into boroughs. This choropleth map shows us the relative density of the number of collisions which have taken place in each borough. The map can be generated for 5 different scenarios based on the number of vehicles involved in the collision (1, 2, 3, 4 or 5). The choropleth map's colorscale is defined by interpolation from light yellow to dark green wherein <b>light yellow is the minimum value and dark green is the maximum value</b>. Every borough is colored using this colorscale based on the number of collisions that have occured in that borough.</p>
+<p style="max-width:512px; margin-left: auto; margin-right: auto; text-align:justify;"> Hovering over a certain borough highlights the region and displays the name of the borough on the top-left corner of the map. Clicking on a borough displays the number of accidents in the borough. Use the slider below to choose the number of vehicles involved in the accident.</p>
 <p>
 		No. of vehicles involved (1 to 5) :<br> 
 		<input id="vehicle_n" type="range" min="1" max="5" step="1" list = "steplist">
@@ -51,7 +51,7 @@ text.small-text{
 </div>
 <script>
 
-var width = 600,
+var width = 512,
     height = 512,
     centered;
     
