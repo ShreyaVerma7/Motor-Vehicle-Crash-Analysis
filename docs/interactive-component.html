@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 6 Interactive component | YOUR TITLE HERE</title>
-  <meta name="description" content="Chapter 6 Interactive component | YOUR TITLE HERE" />
-  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
+  <title>Chapter 6 Interactive component | Motor Vehicle Crash Analysis</title>
+  <meta name="description" content="Chapter 6 Interactive component | Motor Vehicle Crash Analysis" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 6 Interactive component | YOUR TITLE HERE" />
+  <meta property="og:title" content="Chapter 6 Interactive component | Motor Vehicle Crash Analysis" />
   <meta property="og:type" content="book" />
   
   
@@ -16,15 +16,15 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 6 Interactive component | YOUR TITLE HERE" />
+  <meta name="twitter:title" content="Chapter 6 Interactive component | Motor Vehicle Crash Analysis" />
   
   
   
 
-<meta name="author" content="YOUR NAMES HERE" />
+<meta name="author" content="Arunit Maity, Sarthak Bhargava, Shreya Verma" />
 
 
-<meta name="date" content="2020-11-09" />
+<meta name="date" content="2021-12-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,8 +33,9 @@
   
 <link rel="prev" href="results.html"/>
 <link rel="next" href="conclusion.html"/>
-<script src="libs/header-attrs-2.3/header-attrs.js"></script>
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -50,8 +51,9 @@
 
 
 
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 
 
 
@@ -68,13 +70,30 @@
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="./">SHORT TITLE HERE</a></li>
+<li><a href="./">Crash Analysis</a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
-<li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
+<li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing Values</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#missing-values-analysis-for-motor-vehicle-crash-analysis"><i class="fa fa-check"></i><b>4.1</b> Missing Values Analysis for Motor Vehicle Crash Analysis</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="missing-values.html"><a href="missing-values.html#missing-values-by-column"><i class="fa fa-check"></i><b>4.1.1</b> Missing values by column</a></li>
+<li class="chapter" data-level="4.1.2" data-path="missing-values.html"><a href="missing-values.html#bar-plot-to-show-number-of-missing-values-by-borough"><i class="fa fa-check"></i><b>4.1.2</b> Bar Plot to show number of missing values by Borough</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#missing-value-analysis-for-missing-value-patterns-plot-in-all-data-of-vehicles-involved-in-a-collision"><i class="fa fa-check"></i><b>4.2</b> Missing Value Analysis for Missing Value Patterns plot in all data of vehicles involved in a collision</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="missing-values.html"><a href="missing-values.html#missing-pattern-plot-function"><i class="fa fa-check"></i><b>4.2.1</b> Missing Pattern Plot Function</a></li>
+<li class="chapter" data-level="4.2.2" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-5-vehicle-collisions"><i class="fa fa-check"></i><b>4.2.2</b> Missing Value Patterns plot for Vehicles involved in 5 vehicle collisions</a></li>
+<li class="chapter" data-level="4.2.3" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-4-vehicle-collisions"><i class="fa fa-check"></i><b>4.2.3</b> Missing Value Patterns plot for Vehicles involved in 4 vehicle collisions</a></li>
+<li class="chapter" data-level="4.2.4" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-3-vehicle-collisions"><i class="fa fa-check"></i><b>4.2.4</b> Missing Value Patterns plot for Vehicles involved in 3 vehicle collisions</a></li>
+<li class="chapter" data-level="4.2.5" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-2-vehicle-collisions"><i class="fa fa-check"></i><b>4.2.5</b> Missing Value Patterns plot for Vehicles involved in 2 vehicle collisions</a></li>
+<li class="chapter" data-level="4.2.6" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-1-vehicle-collision"><i class="fa fa-check"></i><b>4.2.6</b> Missing Value Patterns plot for Vehicles involved in 1 vehicle collision</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#final-inference-from-above-graphs"><i class="fa fa-check"></i><b>4.3</b> Final Inference from above graphs</a></li>
+</ul></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
@@ -89,7 +108,7 @@
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">YOUR TITLE HERE</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Motor Vehicle Crash Analysis</a>
           </h1>
         </div>
 
@@ -99,6 +118,7 @@
             <section class="normal" id="section-">
 <div id="interactive-component" class="section level1" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Interactive component</h1>
+<p>&lt;iframe src=“map.html” width = 1000 height 1000&gt;</iframe></p>
 
 </div>
             </section>
@@ -111,7 +131,6 @@
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -130,6 +149,7 @@ gitbook.start({
 "weibo": false,
 "instapaper": false,
 "vk": false,
+"whatsapp": false,
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
@@ -138,7 +158,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/edit/main/06-interactive.Rmd",
+"link": "https://github.com/arunitmaity/Motor-Vehicle-Crash-Analysis/edit/main/06-interactive.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -146,10 +166,14 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/blob/main/06-interactive.Rmd",
+"link": "https://github.com/arunitmaity/Motor-Vehicle-Crash-Analysis/blob/main/06-interactive.Rmd",
 "text": null
 },
 "download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }

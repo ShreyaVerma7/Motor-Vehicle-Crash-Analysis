@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>YOUR TITLE HERE</title>
-  <meta name="description" content="YOUR TITLE HERE" />
-  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
+  <title>Motor Vehicle Crash Analysis</title>
+  <meta name="description" content="Motor Vehicle Crash Analysis" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="YOUR TITLE HERE" />
+  <meta property="og:title" content="Motor Vehicle Crash Analysis" />
   <meta property="og:type" content="book" />
   
   
@@ -16,15 +16,15 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="YOUR TITLE HERE" />
+  <meta name="twitter:title" content="Motor Vehicle Crash Analysis" />
   
   
   
 
-<meta name="author" content="YOUR NAMES HERE" />
+<meta name="author" content="Arunit Maity, Sarthak Bhargava, Shreya Verma" />
 
 
-<meta name="date" content="2020-11-09" />
+<meta name="date" content="2021-12-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,8 +33,9 @@
   
 
 <link rel="next" href="data-sources.html"/>
-<script src="libs/header-attrs-2.3/header-attrs.js"></script>
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -50,8 +51,9 @@
 
 
 
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 
 
 
@@ -68,13 +70,30 @@
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="./">SHORT TITLE HERE</a></li>
+<li><a href="./">Crash Analysis</a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
-<li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
+<li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing Values</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#missing-values-analysis-for-motor-vehicle-crash-analysis"><i class="fa fa-check"></i><b>4.1</b> Missing Values Analysis for Motor Vehicle Crash Analysis</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="missing-values.html"><a href="missing-values.html#missing-values-by-column"><i class="fa fa-check"></i><b>4.1.1</b> Missing values by column</a></li>
+<li class="chapter" data-level="4.1.2" data-path="missing-values.html"><a href="missing-values.html#bar-plot-to-show-number-of-missing-values-by-borough"><i class="fa fa-check"></i><b>4.1.2</b> Bar Plot to show number of missing values by Borough</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#missing-value-analysis-for-missing-value-patterns-plot-in-all-data-of-vehicles-involved-in-a-collision"><i class="fa fa-check"></i><b>4.2</b> Missing Value Analysis for Missing Value Patterns plot in all data of vehicles involved in a collision</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="missing-values.html"><a href="missing-values.html#missing-pattern-plot-function"><i class="fa fa-check"></i><b>4.2.1</b> Missing Pattern Plot Function</a></li>
+<li class="chapter" data-level="4.2.2" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-5-vehicle-collisions"><i class="fa fa-check"></i><b>4.2.2</b> Missing Value Patterns plot for Vehicles involved in 5 vehicle collisions</a></li>
+<li class="chapter" data-level="4.2.3" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-4-vehicle-collisions"><i class="fa fa-check"></i><b>4.2.3</b> Missing Value Patterns plot for Vehicles involved in 4 vehicle collisions</a></li>
+<li class="chapter" data-level="4.2.4" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-3-vehicle-collisions"><i class="fa fa-check"></i><b>4.2.4</b> Missing Value Patterns plot for Vehicles involved in 3 vehicle collisions</a></li>
+<li class="chapter" data-level="4.2.5" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-2-vehicle-collisions"><i class="fa fa-check"></i><b>4.2.5</b> Missing Value Patterns plot for Vehicles involved in 2 vehicle collisions</a></li>
+<li class="chapter" data-level="4.2.6" data-path="missing-values.html"><a href="missing-values.html#missing-value-patterns-plot-for-vehicles-involved-in-1-vehicle-collision"><i class="fa fa-check"></i><b>4.2.6</b> Missing Value Patterns plot for Vehicles involved in 1 vehicle collision</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#final-inference-from-above-graphs"><i class="fa fa-check"></i><b>4.3</b> Final Inference from above graphs</a></li>
+</ul></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
@@ -89,7 +108,7 @@
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">YOUR TITLE HERE</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Motor Vehicle Crash Analysis</a>
           </h1>
         </div>
 
@@ -98,12 +117,23 @@
 
             <section class="normal" id="section-">
 <div id="header">
-<h1 class="title">YOUR TITLE HERE</h1>
-<p class="author"><em>YOUR NAMES HERE</em></p>
-<p class="date"><em>2020-11-09</em></p>
+<h1 class="title">Motor Vehicle Crash Analysis</h1>
+<p class="author"><em>Arunit Maity, Sarthak Bhargava, Shreya Verma</em></p>
+<p class="date"><em>2021-12-12</em></p>
 </div>
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
+<p>According to New York State’s Department of Health, motor vehicle traffic crashes are one of the leading causes of injury related death or hospitalization for residents of New York City. Other than homicides, the fatal incidents in which NYPD has the most contact with the public are fatal traffic collisions. An alarming fact is that traffic is the top injury-related cause of death of children in NYC. Thus it is imperative to analyse all the data available on motor vehicle collisions in NYC in order to draw helpful insights to curb the number of fatalities.</p>
+<p>Through this project, our goal is to answer the following questions with the help of Exploratory Data Analysis and Visualization:</p>
+<ul>
+<li>What time during the day has majority of accidents? Medical Services and the NYPD could be more vigilant at this time.</li>
+<li>Which localities are most accident-prone?</li>
+<li>Which areas are most dangerous for pedestrians at night-time? It would be wiser to avoid such areas.</li>
+<li>What are leading contributors to accidents in accident-prone areas? Also, which of these factors would lead to the most fatal accidents?</li>
+<li>What vehicle types are involved in the maximum number of fatal accidents?</li>
+<li>Analyzing data from 2012, was there a drop in the accidents in any area? Clearly, the measures taken to tackle accidents there would have worked and can be extended to other areas in need.</li>
+</ul>
+<p>We hope that such visualizations would enable us to draw inferences that will help reduce collisions on the road.</p>
 
 </div>
             </section>
@@ -116,7 +146,6 @@
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -135,6 +164,7 @@ gitbook.start({
 "weibo": false,
 "instapaper": false,
 "vk": false,
+"whatsapp": false,
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
@@ -143,7 +173,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/edit/main/index.Rmd",
+"link": "https://github.com/arunitmaity/Motor-Vehicle-Crash-Analysis/edit/main/index.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -151,10 +181,14 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/blob/main/index.Rmd",
+"link": "https://github.com/arunitmaity/Motor-Vehicle-Crash-Analysis/blob/main/index.Rmd",
 "text": null
 },
 "download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }
