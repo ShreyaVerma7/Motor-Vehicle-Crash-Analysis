@@ -21,4 +21,6 @@ Through this project, we would like to answer the following questions with Explo
 
 We hope that such visualizations would help draw inferences that could help reduce the collisions on road.
 
+To View the rendered bookdown, use the following link :
+[Rendered Book](https://arunitmaity.github.io/Motor-Vehicle-Crash-Analysis/)
 *This repo was initially generated from a bookdown template available here: https://github.com/jtr13/EDAVtemplate.*	
