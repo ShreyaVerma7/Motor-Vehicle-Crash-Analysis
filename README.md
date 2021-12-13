@@ -1,4 +1,4 @@
-The dataset we plan to implement has been obtained from NYC Open Data. It is a comprehensive dataset with 29 columns and 1.8 million data rows. The link to the dataset is [Motor Vehicle Collisions](https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95).
+The dataset we plan to implement has been obtained from NYC Open Data. It is a comprehensive dataset with 29 columns and 1.8 million data rows. The link to the dataset is [Motor Vehicle Collisions](https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95). 
 
 This [Motor Vehicle Collisions](https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95) crash table contains details on the crash event. The Motor Vehicle Collisions data tables has every row describing a motor vehicle collision and it contains information from all police reported motor vehicle collisions in NYC.
 
