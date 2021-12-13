@@ -38,7 +38,6 @@ names(b)<- c('Hours', 'Percentage of fatal accidents')
 head(b)
 ```
 
-
 ```{r}
 crash$CRASH.DATE <- as.Date(crash$CRASH.DATE , format = "%m/%d/%Y")
 monthly<-crash %>%
@@ -98,5 +97,157 @@ yearly<-merge(x=yearly_2016,y=yearly_2020,by="ZIP.CODE")%>%mutate(Difference=mea
 yearly<-yearly[order(yearly$Difference),]
 yearly<-rbind(head(yearly,n=5),tail(yearly,n=5))
 head(yearly)
+```
+
+```{r}
+data <- read.csv(file = 'Motor_Vehicle_Collisions_Crashes.csv', na.strings = c("", "NA", " "))
+cols = c('BOROUGH','ZIP.CODE','LATITUDE','LONGITUDE','LOCATION')
+data2 <- data[!is.na(data$BOROUGH), 0:18]
+data2 <- data2[-c(8:10)]
+
+data2$TOT.KILLED <- data2$NUMBER.OF.PEDESTRIANS.KILLED + data2$NUMBER.OF.CYCLIST.KILLED + data2$NUMBER.OF.MOTORIST.KILLED
+
+data2$TOT.INJURED <- data2$NUMBER.OF.PEDESTRIANS.INJURED + data2$NUMBER.OF.CYCLIST.INJURED + data2$NUMBER.OF.MOTORIST.INJURED
+
+data2$NUMBER.OF.PERSONS.KILLED <- ifelse(is.na(data2$NUMBER.OF.PERSONS.KILLED),data2$TOT.KILLED,data2$NUMBER.OF.PERSONS.KILLED)
+
+data2$NUMBER.OF.PERSONS.INJURED <- ifelse(is.na(data2$NUMBER.OF.PERSONS.INJURED),data2$TOT.INJURED,data2$NUMBER.OF.PERSONS.INJURED)
+
+head(data2)
+```
+```{r}
+
+x <- data2
+x$YEAR <- format(as.POSIXct(x$CRASH.DATE, format = "%m/%d/%Y"),format = '%Y')
+t <- x %>% group_by(YEAR,BOROUGH) %>% 
+    summarise(NUMBER.OF.PERSONS.KILLED = sum(NUMBER.OF.PERSONS.KILLED),.groups = 'drop')
+head(t)
+```
+
+```{r}
+xB <- data2[data2$BOROUGH=='BROOKLYN',]
+xB_new <- xB %>% group_by(ZIP.CODE) %>% 
+    summarise(NUMBER.OF.PERSONS.TOT.HURT = sum(NUMBER.OF.PERSONS.KILLED) + sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+xB_new <- xB_new[order(-xB_new$NUMBER.OF.PERSONS.TOT.HURT),]
+xB_new <- xB_new %>% mutate(ZIP.CODE = as.character(ZIP.CODE))
+head(xB_new)
+```
+
+
+```{r}
+data2$YEAR <- format(as.POSIXct(data2$CRASH.DATE, format = "%m/%d/%Y"),format = '%Y')
+
+incidents_tma <- data2 %>% group_by(YEAR, BOROUGH) %>% summarise(Total.Hurt = sum(NUMBER.OF.PERSONS.INJURED) + sum(NUMBER.OF.PERSONS.KILLED),.groups = 'drop')
+head(incidents_tma)
+incidents_tma2 <- data2 %>% group_by(YEAR, BOROUGH) %>% summarise(Total.Injured = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+head(incidents_tma2)
+incidents_tma3 <- data2 %>% group_by(YEAR, BOROUGH) %>% summarise(Total.Killed = sum(NUMBER.OF.PERSONS.KILLED),.groups = 'drop')
+head(incidents_tma3)
+```
+
+```{r}
+data2 <- data[!is.na(data$BOROUGH), ]
+data2 <- data2[-c(8:10)]
+
+data2$TOT.KILLED <- data2$NUMBER.OF.PEDESTRIANS.KILLED + data2$NUMBER.OF.CYCLIST.KILLED + data2$NUMBER.OF.MOTORIST.KILLED
+
+data2$TOT.INJURED <- data2$NUMBER.OF.PEDESTRIANS.INJURED + data2$NUMBER.OF.CYCLIST.INJURED + data2$NUMBER.OF.MOTORIST.INJURED
+
+data2$NUMBER.OF.PERSONS.KILLED <- ifelse(is.na(data2$NUMBER.OF.PERSONS.KILLED),data2$TOT.KILLED,data2$NUMBER.OF.PERSONS.KILLED)
+
+data2$NUMBER.OF.PERSONS.INJURED <- ifelse(is.na(data2$NUMBER.OF.PERSONS.INJURED),data2$TOT.INJURED,data2$NUMBER.OF.PERSONS.INJURED)
+
+data2$CONTRIBUTING.FACTOR.VEHICLE.1[data2$CONTRIBUTING.FACTOR.VEHICLE.1=='Illnes'] <- 'Illness'
+data2$CONTRIBUTING.FACTOR.VEHICLE.2[data2$CONTRIBUTING.FACTOR.VEHICLE.2=='Illnes'] <- 'Illness'
+data2$CONTRIBUTING.FACTOR.VEHICLE.3[data2$CONTRIBUTING.FACTOR.VEHICLE.3=='Illnes'] <- 'Illness'
+data2$CONTRIBUTING.FACTOR.VEHICLE.4[data2$CONTRIBUTING.FACTOR.VEHICLE.4=='Illnes'] <- 'Illness'
+data2$CONTRIBUTING.FACTOR.VEHICLE.5[data2$CONTRIBUTING.FACTOR.VEHICLE.5=='Illnes'] <- 'Illness'
+
+data2$CONTRIBUTING.FACTOR.VEHICLE.1 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.1)
+data2$CONTRIBUTING.FACTOR.VEHICLE.2 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.2)
+data2$CONTRIBUTING.FACTOR.VEHICLE.3 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.3)
+data2$CONTRIBUTING.FACTOR.VEHICLE.4 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.4)
+data2$CONTRIBUTING.FACTOR.VEHICLE.5 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.5)
+
+data2$VEHICLE.TYPE.CODE.1 <- tolower(data2$VEHICLE.TYPE.CODE.1)
+data2$VEHICLE.TYPE.CODE.1[data2$VEHICLE.TYPE.CODE.1=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+data2$VEHICLE.TYPE.CODE.2 <- tolower(data2$VEHICLE.TYPE.CODE.2)
+data2$VEHICLE.TYPE.CODE.2[data2$VEHICLE.TYPE.CODE.2=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+data2$VEHICLE.TYPE.CODE.3 <- tolower(data2$VEHICLE.TYPE.CODE.3)
+data2$VEHICLE.TYPE.CODE.3[data2$VEHICLE.TYPE.CODE.3=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+data2$VEHICLE.TYPE.CODE.4 <- tolower(data2$VEHICLE.TYPE.CODE.4)
+data2$VEHICLE.TYPE.CODE.4[data2$VEHICLE.TYPE.CODE.4=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+data2$VEHICLE.TYPE.CODE.5 <- tolower(data2$VEHICLE.TYPE.CODE.5)
+data2$VEHICLE.TYPE.CODE.5[data2$VEHICLE.TYPE.CODE.5=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+
+head(data2)
+```
+```{r}
+x <- data2[!is.na(data2$CONTRIBUTING.FACTOR.VEHICLE.1),]
+
+x$NUMBER.OF.PERSONS.F = x$NUMBER.OF.PERSONS.KILLED + x$NUMBER.OF.PERSONS.INJURED
+
+x <- x %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% 
+    summarise(NUMBER.OF.PERSONS.F = sum(NUMBER.OF.PERSONS.F),.groups = 'drop')
+
+x <- x[order(-x$NUMBER.OF.PERSONS.F),]
+head(x)
+```
+
+```{r}
+x <- data2[!is.na(data2$CONTRIBUTING.FACTOR.VEHICLE.1),]
+
+fulldata <- x %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+fulldata <- fulldata[order(-fulldata$NUMBER.OF.PERSONS.INJURED),]
+fulldata <- fulldata[2:20,]
+
+
+brooklyn <- x %>% filter(BOROUGH == 'BROOKLYN') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+brooklyn <- brooklyn[order(-brooklyn$NUMBER.OF.PERSONS.INJURED),]
+
+
+queens <- x %>% filter(BOROUGH == 'QUEENS') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+queens <- queens[order(-queens$NUMBER.OF.PERSONS.INJURED),]
+
+manhattan <- x %>% filter(BOROUGH == 'MANHATTAN') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+manhattan <- manhattan[order(-manhattan$NUMBER.OF.PERSONS.INJURED),]
+
+bronx <- x %>% filter(BOROUGH == 'BRONX') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+bronx <- bronx[order(-bronx$NUMBER.OF.PERSONS.INJURED),]
+
+staten <- x %>% filter(BOROUGH == 'STATEN ISLAND') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+staten <- staten[order(-staten$NUMBER.OF.PERSONS.INJURED),]
+
+fulldata <- merge(x=brooklyn, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+fulldata <- merge(x=queens, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+fulldata <- merge(x=manhattan, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+fulldata <- merge(x=bronx, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+fulldata <- merge(x=staten, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+names(fulldata) <- c('CONTRIBUTING.FACTOR.VEHICLE.1', '2','3','4','5','6','7')
+fulldata <- data.frame(fulldata)
+head(fulldata)
+```
+
+```{r}
+counts <- data2 %>% drop_na(VEHICLE.TYPE.CODE.1) %>% group_by(VEHICLE.TYPE.CODE.1) %>% summarize(Count = n()) %>% arrange(desc(Count))
+counts <- head(counts,20)
+counts$Count <- counts$Count/1000
+head(counts)
+```
+
+```{r}
+x <- data2[!is.na(data2$VEHICLE.TYPE.CODE.1),]
+x <- x[!is.na(x$VEHICLE.TYPE.CODE.2),]
+x <- x[x$VEHICLE.TYPE.CODE.1=='ambulance',]
+counts <- x %>% group_by(VEHICLE.TYPE.CODE.2) %>% summarize(Count = n()) %>% arrange(desc(Count))
+counts <- head(counts,20)
+counts$Count <- counts$Count
+head(counts)
 ```
 
