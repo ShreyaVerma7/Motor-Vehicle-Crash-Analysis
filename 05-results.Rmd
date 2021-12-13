@@ -15,13 +15,14 @@ library(cartography)
 library(sf)
 library(geojsonio)
 library(broom)
+options(scipen=999)
 ```
 
 
 ## What time slots see the most accidents?
 
 ```{r}
-crash <- read_csv('Motor_Vehicle_Collisions_Crashes.csv')
+crash <- read_csv('Motor_Vehicle_Collisions_Crashes.csv',na = c("", "NA", " "))
 names(crash) <- make.names(names(crash), unique=TRUE)
 crash<-crash%>% drop_na(CRASH.TIME)
 crash$CRASH.TIME <- as.hms(crash$CRASH.TIME)
@@ -37,7 +38,7 @@ ggplot(crash,aes(x = CRASH.TIME.hr.range)) +
     y = "Number of crashes")
 ```
 
-Looking at the graph generated above, we observe that the peak hours of the evening and afternoon from 2PM to 8PM see the most accidents. This makes sense since the highest number of cars on the road at these times. An unusual peak occurs at the time slot 12AM to 1AM. Since this is the time most public and recreational spots close, it is possible that the higher number of accidents are observed due to greater traffic.
+Looking at the graph generated above, we observe that the peak hours of the evening and afternoon from 2PM to 8PM (highest being from 4-5PM) see the most accidents. This makes sense since the highest number of cars on the road at these times. An unusual peak occurs at the time slot 12AM to 1AM. Since this is the time most public and recreational spots close, it is possible that the higher number of accidents are observed due to greater traffic.
 
 
 ```{r}
@@ -75,7 +76,8 @@ x = "Months",
 y = "Number of crashes")
 ```
 
-October sees the highest number of accidents. This could be due to the Halloween weekend which creates greater road traffic. Additionally, the change to shorter nights during this month causes visibility issues.  
+
+July sees the highest number of accidents. This is probably due to higher road traffic on the 4th of July weekend. The month also experiences the most rainfall in New York City which could have led to a greater number of accidents.
 
 
 ```{r}
