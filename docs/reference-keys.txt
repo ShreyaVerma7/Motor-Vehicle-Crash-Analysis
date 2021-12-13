@@ -1,5 +1,7 @@
 introduction
 data-sources
+motor-vehicle-crash-data
+geospatial-data
 data-transformation
 missing-values
 missing-values-analysis-for-motor-vehicle-crash-analysis

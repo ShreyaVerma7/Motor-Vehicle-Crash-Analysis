@@ -74,7 +74,11 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#motor-vehicle-crash-data"><i class="fa fa-check"></i><b>2.1</b> Motor Vehicle Crash Data</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#geospatial-data"><i class="fa fa-check"></i><b>2.2</b> Geospatial Data</a></li>
+</ul></li>
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing Values</a>
 <ul>
@@ -130,11 +134,20 @@
             <section class="normal" id="section-">
 <div id="data-sources" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Data sources</h1>
+<div id="motor-vehicle-crash-data" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Motor Vehicle Crash Data</h2>
 <p>Due to success of the CompStat program implemented by NYPD in 1994, they began to apply the CompStat principles to other problems such as traffic collisions. Thus in April 1998 they implemented TrafficStat, which uses the CompStat model to work towards improving traffic safety wherein police officers complete form MV-104AN for all vehicle collisions. The MV-104AN is a New York State form that has all of the details of a traffic collision. Currently, Finest Online Records Management System (FORMS) enables the police officers to electronically, using a Department cellphone or computer, enter all of the MV-104AN data fields and stores all of the MV-104AN data fields in the Department’s crime data warehouse which is then published in the NYC OpenData website regularly. All of the data is publicly available.</p>
 <p>The dataset we plan to implement has been obtained from NYC Open Data and is named ‘Motor Vehicle Collisions - Crashes’. It is a comprehensive dataset with 29 columns and 1.8 million data rows. The data is in the form of a table which has every row describing a motor vehicle collision and it contains information from all reported motor vehicle collisions in NYC.</p>
 <p>Note - A police report (MV104-AN) is required to be filled out for collisions where someone is injured or killed, or where there is at least $1000 worth of damage.</p>
 <p><a href="https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95">Motor Vehicle Collisions Dataset</a></p>
+</div>
+<div id="geospatial-data" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Geospatial Data</h2>
+<p>In order to visualize trends using the locations of crashes present in the collision tabluar data amongst boroughs and zipcodes of New York City, we use GEOJSON files which store geospatial data regarding the boundaries of all booroughs and zipcodes. These files are publicly available and have open access.</p>
+<p><a href="https://data.cityofnewyork.us/City-Government/Borough-Boundaries/tqmj-j8zm">NYC Borough Boundaries</a>
+<a href="https://data.cityofnewyork.us/widgets/i8iw-xf4u">NYC Zip Codes</a></p>
 
+</div>
 </div>
             </section>
 

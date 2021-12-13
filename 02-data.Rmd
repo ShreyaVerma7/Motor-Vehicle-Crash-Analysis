@@ -1,5 +1,7 @@
 # Data sources
 
+## Motor Vehicle Crash Data
+
 Due to success of the CompStat program implemented by NYPD in 1994, they began to apply the CompStat principles to other problems such as traffic collisions. Thus in April 1998 they implemented TrafficStat, which uses the CompStat model to work towards improving traffic safety wherein police officers complete form MV-104AN for all vehicle collisions. The MV-104AN is a New York State form that has all of the details of a traffic collision. Currently, Finest Online Records Management System (FORMS) enables the police officers to electronically, using a Department cellphone or computer, enter all of the MV-104AN data fields and stores all of the MV-104AN data fields in the Department’s crime data warehouse which is then published in the NYC OpenData website regularly. All of the data is publicly available.
 
 The dataset we plan to implement has been obtained from NYC Open Data and is named 'Motor Vehicle Collisions - Crashes'. It is a comprehensive dataset with 29 columns and 1.8 million data rows. The data is in the form of a table which has every row describing a motor vehicle collision and it contains information from all reported motor vehicle collisions in NYC.
@@ -7,3 +9,10 @@ The dataset we plan to implement has been obtained from NYC Open Data and is nam
 Note - A police report (MV104-AN) is required to be filled out for collisions where someone is injured or killed, or where there is at least $1000 worth of damage.
 
 [Motor Vehicle Collisions Dataset](https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95)
+
+## Geospatial Data
+
+In order to visualize trends using the locations of crashes present in the collision tabluar data amongst boroughs and zipcodes of New York City, we use GEOJSON files which store geospatial data regarding the boundaries of all booroughs and zipcodes. These files are publicly available and have open access. 
+
+[NYC Borough Boundaries](https://data.cityofnewyork.us/City-Government/Borough-Boundaries/tqmj-j8zm)
+[NYC Zip Codes](https://data.cityofnewyork.us/widgets/i8iw-xf4u)

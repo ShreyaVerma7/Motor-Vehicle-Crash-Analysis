@@ -74,7 +74,11 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#motor-vehicle-crash-data"><i class="fa fa-check"></i><b>2.1</b> Motor Vehicle Crash Data</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#geospatial-data"><i class="fa fa-check"></i><b>2.2</b> Geospatial Data</a></li>
+</ul></li>
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing Values</a>
 <ul>
@@ -132,78 +136,78 @@
 <h1><span class="header-section-number">Chapter 5</span> Results</h1>
 <div id="what-time-slots-see-the-most-accidents" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> What time slots see the most accidents?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
 <p>Looking at the graph generated above, we observe that the peak hours of the evening and afternoon from 2PM to 8PM see the most accidents. This makes sense since the highest number of cars on the road at these times. An unusual peak occurs at the time slot 12AM to 1AM. Since this is the time most public and recreational spots close, it is possible that the higher number of accidents are observed due to greater traffic.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <p>We see the highest proportion of fatal accidents in the later hours of the day. Whilst the number of accidents may be more during the evening, the proportion of them being fatal is much lesser. This could be due to lower visibility, driver intoxication or over-speeding. The police and ambulance services should be highly vigilant at these times to prevent any loss of life.</p>
 </div>
 <div id="which-months-see-the-most-number-of-accidents" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Which months see the most number of accidents?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
 <p>October sees the highest number of accidents. This could be due to the Halloween weekend which creates greater road traffic. Additionally, the change to shorter nights during this month causes visibility issues.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
 <p>The highest number of fatal crashes is observed during September. This could be caused by greater road traffic due to nicer weather, schools being back in session, and the Labor Day weekend. Days getting shorter may also be a contributing factor.</p>
 </div>
 <div id="what-days-see-the-most-number-of-accidents" class="section level2" number="5.3">
 <h2><span class="header-section-number">5.3</span> What days see the most number of accidents?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-49-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
 <p>Most crashes are observed on 12th September and least on 29th Feb. There is no particular reason for the former being this way. 29th Feb was naturally the day the fewest accidents were observed as the date occurs once every 4 years.</p>
 </div>
 <div id="which-localities-are-the-most-accident-prone" class="section level2" number="5.4">
 <h2><span class="header-section-number">5.4</span> Which localities are the most accident prone?</h2>
 <p>First, we’d like to see the trend of people killed in Motor Vehicle Crashes over the years (2012- 2021) in Boroughs across New York.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
 <p>Overall, it is apparent that Brooklyn has had the highest number of people killed in crashes among all Boroughs of New York across the years from 2012 to 2021 (except in 2013 and 2018). Queens has come to a close second in the number of people killed across the years from 2012 to 2021 (except in 2016).</p>
 <p>Furthermore, Staten Island has has the least number of people killed in Motor Vehicle crashes among all Boroughs and across all the given years.</p>
 <p>Diving into this further, we look at the number of people injured by vehicle crashes in the same time period to confirm if the above analysis still holds.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
 <p>It is clear that Brooklyn has the highest number of people injured by vehicle crashes across all years; it is above 10 thousand injuries every year from 2013-2021. Queens is the second most dangerous area in terms of number of people injured by vehicle crashes with above 10 thousand injuries every year from 2013-2019.</p>
 <p>Thus, the same trend from above continues with Brooklyn being very unsafe in terms of road safety.</p>
 <p>Now, let us look into what are the top 20 areas (referenced by Zip Codes) in Brooklyn that have the highest number of fatalities (people killed and people injured).</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-56-1.png" width="960" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-43-1.png" width="960" /></p>
 <p>Each of these area codes in Brooklyn have more than 2500 fatalities. These area codes could be having the highest number of accidents thus causing more fatalities.</p>
 <p>Now, we visualize the impact caused by accidents in each Borough to get an understanding of which Boroughs have been most impacted in terms of number of fatalities, people killed and people innjured.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-57-1.png" width="960" /><img src="finalproj_files/figure-html/unnamed-chunk-57-2.png" width="960" /><img src="finalproj_files/figure-html/unnamed-chunk-57-3.png" width="960" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-44-1.png" width="960" /><img src="finalproj_files/figure-html/unnamed-chunk-44-2.png" width="960" /><img src="finalproj_files/figure-html/unnamed-chunk-44-3.png" width="960" /></p>
 <p>Brooklyn and Queens seem to have the highest number of accidents throughout. In 2013 and 2014, there were maximum number of those hurt in New York and the majority of these last in Brooklyn and Queens - making these regions concerning. It can be noted here though that Brooklyn and Queens seem to have been consistently high number of people killed and injured every year.</p>
 </div>
 <div id="how-do-the-boroughs-with-the-most-and-least-accidents-compare" class="section level2" number="5.5">
 <h2><span class="header-section-number">5.5</span> How do the boroughs with the most and least accidents compare?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
 <p>Through the comparison histogram, we evaluate the two boroughs Brooklyn, which sees the most number of accidents, and Staten Island, which sees the least. While the distribution of accident count over the time slots remains similar, the magnitude is vastly different. This is due to the fact that Brooklyn has a much higher population and population density (nearly 5 times the number of people per square mile)</p>
 </div>
 <div id="can-we-observe-the-zip-codes-with-the-most-accidents-on-a-map" class="section level2" number="5.6">
 <h2><span class="header-section-number">5.6</span> Can we observe the zip codes with the most accidents on a map?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
 <p>The least accidents have been observed in Zip Code 10055 (in the metro area of Manhattan) and the highest in 11207 (South-East NY-Brooklyn). This could be due to a smaller area asociated with the zip code as well as population densities.</p>
 </div>
 <div id="what-does-the-accident-density-over-ny-look-like" class="section level2" number="5.7">
 <h2><span class="header-section-number">5.7</span> What does the accident density over NY look like?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
 <p>It is apparent that Brooklyn and Queens have high densities of accidents, however, it is really interesting to see that Manhattan has a trend of increasing density.</p>
 </div>
 <div id="what-are-leading-contributors-to-accidents-in-accident-prone-areas-also-which-of-these-factors-would-lead-to-the-most-fatal-accidents" class="section level2" number="5.8">
 <h2><span class="header-section-number">5.8</span> What are leading contributors to accidents in accident-prone areas? Also, which of these factors would lead to the most fatal accidents?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-63-1.png" width="672" />
-The above plot shows the leading contributing factors to fatalities (i.e. people killed and injured). ‘Unspecified’ contributors have the highest occurance; it could involve a hit-and-run case or when the exact reason behind the accident could not be recorded. It is also clear that driver inattention/distraction and the failure to yield right-of-way are the two highest recorded causes of accidents. This often happens when the driver is under the influence or sleepy or the roads look mostly empty.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
+<p>The above plot shows the leading contributing factors to fatalities (i.e. people killed and injured). ‘Unspecified’ contributors have the highest occurance; it could involve a hit-and-run case or when the exact reason behind the accident could not be recorded. It is also clear that driver inattention/distraction and the failure to yield right-of-way are the two highest recorded causes of accidents. This often happens when the driver is under the influence or sleepy or the roads look mostly empty.</p>
 <p>Moving on to the leading contributors in the most accident prone areas, we have the following graph:</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-64-1.png" width="960" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-51-1.png" width="960" /></p>
 <p>Here, we observe the division of recorded contributing factors in injuries accidents in different Boroughs. Driver inattention or distraction and the failure to yield right-of-way is the highest cause of accidents in all the Boroughs of New York. These factors are followed by traffic control disregarded and vehicles following too closely. It appears to be that the trend of the highest contributing factors for accidents across all Boroughs is similar.</p>
 <p>Note - In this graph, we don’t include ‘Unspecified’ as a contributing factor; due to its sheer frequency, the varied scale does not allow us to see the other contributing factors clearly. However, it must be noted that the highest contributing factor is still the ‘Unspecified’.</p>
 </div>
 <div id="what-vehicle-types-are-involved-in-the-maximum-number-of-fatal-accidents" class="section level2" number="5.9">
 <h2><span class="header-section-number">5.9</span> What vehicle types are involved in the maximum number of fatal accidents?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-65-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
 <p>SUV’s or Station wagons get into the highest number of accidents. Passenger vehicles and sedans form a close second and third respectively to SUV’s or Station wagons. This could be because the most seen vehicles on the roads are also SUV’s and passenger vehicles.</p>
 <p>We move on to see which of these vehicles cause the highest number of fatalities below.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-66-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
 <p>The number of victims of the accidents are highest among accidents involving SUV’s or station wagons. This is closely followed by the number of victims of the accidents caused by sedans and passenger vehicles. Again, this could be due to the fact that there is a maximum occurrence of such vehicles in the areas.</p>
 <p>We can see that there are some number of fatalities caused by Ambulances. Since this is an emergency vehicle taking the sick to the closest hospitals, we should go deeper and see which vehicles are colliding with Ambulances and why.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-67-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
 <p>From the above graph, it is again apparent that the maximum number of accidents involving ambulances are with SUV’s or station wagons. However, we can also see that there were instances of an ambulance crashing with another ambulance. This is interesting because ambulances are exempted from following most road rules. However, if this is leading to more accidents, we should look into this and try to minimize it.</p>
 </div>
 <div id="which-neighborhoods-have-improved-or-deteriorated-the-most" class="section level2" number="5.10">
 <h2><span class="header-section-number">5.10</span> Which neighborhoods have improved or deteriorated the most?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-68-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
 <p>In this graph we have tried to isolate the most improved and deteriorated regions in the time frame (2012-2021) through their zip code. We took a mean across the first 5 years and the next 5 years. The difference was calculated and plotted. The most improved zip code is 10022 and the one which deteriorated the most is 11212. Clearly the former has been successful in implementing ways to curb accidents and the later has not. The reasons for this decrease need to be analyzed carefully and similar policies should be implemented state wide.</p>
 
 </div>

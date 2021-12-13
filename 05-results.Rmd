@@ -13,6 +13,8 @@ library(scales)
 library(tigris)
 library(cartography)
 library(sf)
+library(geojsonio)
+library(broom)
 ```
 
 
@@ -358,6 +360,7 @@ x <- x[order(-x$NUMBER.OF.PERSONS.F),]
 ggplot(x[1:20,], aes(x=NUMBER.OF.PERSONS.F/1000, y = reorder(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.F))) + geom_bar(stat='identity') + labs(x = 'Number of Fatalities (in thousands)', y='Contributing Factors to the Accident') +ggtitle('The Top 20 Contributing Factors leading to fatalities\n (people injured and killed)') +theme_classic(base_size = 9)
 
 ```
+
 The above plot shows the leading contributing factors to fatalities (i.e. people killed and injured). 'Unspecified' contributors have the highest occurance; it could involve a hit-and-run case or when the exact reason behind the accident could not be recorded. It is also clear that driver inattention/distraction and the failure to yield right-of-way are the two highest recorded causes of accidents. This often happens when the driver is under the influence or sleepy or the roads look mostly empty. 
 
 Moving on to the leading contributors in the most accident prone areas, we have the following graph:
