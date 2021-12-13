@@ -19,7 +19,7 @@ library(sf)
 ## What time slots see the most accidents?
 
 ```{r}
-crash <- read_csv('Motor_Vehicle_Collisions_-_Crashes.csv')
+crash <- read_csv('Motor_Vehicle_Collisions_Crashes.csv')
 names(crash) <- make.names(names(crash), unique=TRUE)
 crash<-crash%>% drop_na(CRASH.TIME)
 crash$CRASH.TIME <- as.hms(crash$CRASH.TIME)
@@ -266,7 +266,7 @@ Through the comparison histogram, we evaluate the two boroughs Brooklyn, which s
 wzc<-crash%>%group_by(ZIP.CODE)%>%tally(sort=TRUE)%>%slice(1:10)
 wzc
 #Mention large number of missing values
-sd<-geojson_read('/Users/sarthakbhargava/Downloads/ZIP-CODES.geojson',what='sp')
+sd<-geojson_read('ZIP-CODES.geojson',what='sp')
 wzc<-crash%>%group_by(ZIP.CODE)%>%tally()
 names(wzc)<-c('ZIP.CODE', 'Count')
 wzc$ZIP.CODE<-as.character(wzc$ZIP.CODE)

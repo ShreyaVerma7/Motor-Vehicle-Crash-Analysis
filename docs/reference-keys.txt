@@ -14,5 +14,15 @@ missing-value-patterns-plot-for-vehicles-involved-in-2-vehicle-collisions
 missing-value-patterns-plot-for-vehicles-involved-in-1-vehicle-collision
 final-inference-from-above-graphs
 results
+what-time-slots-see-the-most-accidents
+which-months-see-the-most-number-of-accidents
+what-days-see-the-most-number-of-accidents
+which-localities-are-the-most-accident-prone
+how-do-the-boroughs-with-the-most-and-least-accidents-compare
+can-we-observe-the-zip-codes-with-the-most-accidents-on-a-map
+what-does-the-accident-density-over-ny-look-like
+what-are-leading-contributors-to-accidents-in-accident-prone-areas-also-which-of-these-factors-would-lead-to-the-most-fatal-accidents
+what-vehicle-types-are-involved-in-the-maximum-number-of-fatal-accidents
+which-neighborhoods-have-improved-or-deteriorated-the-most
 interactive-component
 conclusion
