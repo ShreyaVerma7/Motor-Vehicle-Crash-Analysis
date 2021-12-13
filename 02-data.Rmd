@@ -4,6 +4,6 @@ Due to success of the CompStat program implemented by NYPD in 1994, they began t
 
 The dataset we plan to implement has been obtained from NYC Open Data and is named 'Motor Vehicle Collisions - Crashes'. It is a comprehensive dataset with 29 columns and 1.8 million data rows. The data is in the form of a table which has every row describing a motor vehicle collision and it contains information from all reported motor vehicle collisions in NYC.
 
-Note - A police report (MV104-AN) is required to be filled out for collisions where someone is injured or killed, or where there is at least $1000 worth of damage can be checked too.
+Note - A police report (MV104-AN) is required to be filled out for collisions where someone is injured or killed, or where there is at least $1000 worth of damage.
 
 [Motor Vehicle Collisions Dataset](https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95)

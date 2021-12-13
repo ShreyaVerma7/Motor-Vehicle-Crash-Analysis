@@ -1,1 +1,3 @@
 # Data transformation
+
+We typecasted the date and time columns to the required format. When plotting Borough, Zip Code and Crash time summary statistics, we dropped all instances where the values were not available and grouped by the appropriate variable. Depending on the graph requirements, we took subsets of the data using filtering. When plotting the Choropleth maps, we obtained the geojson data corresponding to NYC Boroughs and Zip Codes, and merged it with our transformed data.
