@@ -11,11 +11,15 @@ According to New York State's Department of Health, motor vehicle traffic crashe
 
 Through this project, our goal is to answer the following questions with the help of Exploratory Data Analysis and Visualization:
 
-* What time during the day has majority of accidents? Medical Services and the NYPD could be more vigilant at this time.
-* Which localities are most accident-prone? 
-* Which areas are most dangerous for pedestrians at night-time? It would be wiser to avoid such areas. 
-* What are leading contributors to accidents in accident-prone areas? Also, which of these factors would lead to the most fatal accidents? 
-* What vehicle types are involved in the maximum number of fatal accidents? 
-* Analyzing data from 2012, was there a drop in the accidents in any area? Clearly, the measures taken to tackle accidents there would have worked and can be extended to other areas in need.
+* What time slots see the most accidents? Medical Services and the NYPD could be more vigilant at this time.
+* Which months see the most number of accidents
+* What days see the most number of accidents?
+* Which localities are the most accident prone?
+* How do the boroughs with the most and least accidents compare?
+* Can we observe the zip codes with the most accidents on a map?
+* What does the accident density over NY look like?
+* What are leading contributors to accidents in accident-prone areas? Also, which of these factors would lead to the most fatal accidents?
+* What vehicle types are involved in the maximum number of fatal accidents?
+* Which neighborhoods have improved or deteriorated the most?
 
 We hope that such visualizations would enable us to draw inferences that will help reduce collisions on the road.
