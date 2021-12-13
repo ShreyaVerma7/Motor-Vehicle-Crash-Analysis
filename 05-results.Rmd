@@ -1,16 +1,24 @@
-# Result
-
-## What time slots see the most accidents?
+# Results
 
 ```{r}
+library(dplyr)
+library(Lock5withR)
 library(tidyverse)
-library(hms)
+library(patchwork)
 library(ggplot2)
+library(ggnewscale)
+library(hms)
 library(lubridate)
 library(scales)
 library(tigris)
 library(cartography)
 library(sf)
+```
+
+
+## What time slots see the most accidents?
+
+```{r}
 crash <- read_csv('Motor_Vehicle_Collisions_-_Crashes.csv')
 names(crash) <- make.names(names(crash), unique=TRUE)
 crash<-crash%>% drop_na(CRASH.TIME)
@@ -25,8 +33,8 @@ ggplot(crash,aes(x = CRASH.TIME.hr.range)) +
     title = "Crashes based on time",
     x = "Time in hours",
     y = "Number of crashes")
-
 ```
+
 Looking at the graph generated above, we observe that the peak hours of the evening and afternoon from 2PM to 8PM see the most accidents. This makes sense since the highest number of cars on the road at these times. An unusual peak occurs at the time slot 12AM to 1AM. Since this is the time most public and recreational spots close, it is possible that the higher number of accidents are observed due to greater traffic.
 
 
@@ -42,8 +50,8 @@ labs(
 title = "Percentage of fatal crashes",
 x = "Time in hours",
 y = "Percentage value")
-
 ```
+
 We see the highest proportion of fatal accidents in the later hours of the day. Whilst the number of accidents may be more during the evening, the proportion of them being fatal is much lesser. This could be due to lower visibility, driver intoxication or over-speeding. The police and ambulance services should be highly vigilant at these times to prevent any loss of life.
 
 ## Which months see the most number of accidents?
@@ -63,7 +71,6 @@ labs(
 title = "Crashes per month",
 x = "Months",
 y = "Number of crashes")
-
 ```
 
 October sees the highest number of accidents. This could be due to the Halloween weekend which creates greater road traffic. Additionally, the change to shorter nights during this month causes visibility issues.  
@@ -83,16 +90,13 @@ labs(
 title = "Fatal crashes per month",
 x = "Months",
 y = "Number of fatal crashes")
-
-
-
 #Get highest month
 ```
 
 
 The highest number of fatal crashes is observed during September. This could be caused by greater road traffic due to nicer weather, schools being back in session, and the Labor Day weekend. Days getting shorter may also be a contributing factor.
 
-## What days see the most number of accidents
+## What days see the most number of accidents?
 
 ```{r}
 daily<-crash %>%
@@ -109,9 +113,128 @@ ggplot(daily, aes(x=date, y=n)) +
 daily_f<-crash %>%
 mutate(month = format(CRASH.DATE, "%m"), day = format(CRASH.DATE, "%d")) %>%
 group_by(month, day) %>%tally(sort = TRUE)
+```
+
+Most crashes are observed on 12th September and least on 29th Feb. There is no particular reason for the former being this way. 29th Feb was naturally the day the fewest accidents were observed as the date occurs once every 4 years.
+
+
+```{r}
+# Loading Motor Vehicle Collisions Crashes data
+data <- read.csv(file = 'Motor_Vehicle_Collisions_Crashes.csv', na.strings = c("", "NA", " "))
+data
+```
+
+## Which localities are the most accident prone?
+
+```{r}
+#Drop all rows with NA Borough values.
+cols = c('BOROUGH','ZIP.CODE','LATITUDE','LONGITUDE','LOCATION')
+data2 <- data[!is.na(data$BOROUGH), 0:18]
+data2 <- data2[-c(8:10)]
+data2
+```
+
+
+```{r}
+#Number of missing values
+temp <- colSums(is.na(data2)) %>% sort(decreasing = TRUE) %>% data.frame()
+print(temp)
+```
+
+
+```{r}
+
+data2$TOT.KILLED <- data2$NUMBER.OF.PEDESTRIANS.KILLED + data2$NUMBER.OF.CYCLIST.KILLED + data2$NUMBER.OF.MOTORIST.KILLED
+
+data2$TOT.INJURED <- data2$NUMBER.OF.PEDESTRIANS.INJURED + data2$NUMBER.OF.CYCLIST.INJURED + data2$NUMBER.OF.MOTORIST.INJURED
+
+data2$NUMBER.OF.PERSONS.KILLED <- ifelse(is.na(data2$NUMBER.OF.PERSONS.KILLED),data2$TOT.KILLED,data2$NUMBER.OF.PERSONS.KILLED)
+
+data2$NUMBER.OF.PERSONS.INJURED <- ifelse(is.na(data2$NUMBER.OF.PERSONS.INJURED),data2$TOT.INJURED,data2$NUMBER.OF.PERSONS.INJURED)
 
 ```
-Most crashes are observed on 12th September and least on 29th Feb. There is no particular reason for the former being this way. 29th Feb was naturally the day the fewest accidents were observed as the date occurs once every 4 years.
+
+First, we'd like to see the trend of people killed in Motor Vehicle Crashes over the years (2012- 2021) in Boroughs across New York. 
+
+```{r}
+#Groupby Borough and Zip Code to get Number of Persons Killed and Injured (per year)
+library(reshape2)
+x <- data2
+x$YEAR <- format(as.POSIXct(x$CRASH.DATE, format = "%m/%d/%Y"),format = '%Y')
+t <- x %>% group_by(YEAR,BOROUGH) %>% 
+    summarise(NUMBER.OF.PERSONS.KILLED = sum(NUMBER.OF.PERSONS.KILLED),.groups = 'drop')
+ggplot(t, aes(YEAR, NUMBER.OF.PERSONS.KILLED, fill=BOROUGH, group=BOROUGH)) + geom_bar(stat='identity', position='dodge') + labs(x="Years", y="Number of Persons Killed") + ggtitle('Number of Persons killed in Motor Vehicle Crashes in New York')
+
+#ggplot(t, aes(YEAR, NUMBER.OF.PERSONS.KILLED, fill=BOROUGH, group=BOROUGH)) + geom_line(aes(color = BOROUGH)) + labs(x="Years", y="Number of Persons Killed") + ggtitle('Number of Persons killed in Motor Vehicle Crashes in New York')
+```
+
+Overall, it is apparent that Brooklyn has had the highest number of people killed in crashes among all Boroughs of New York across the years from 2012 to 2021 (except in 2013 and 2018). Queens has come to a close second in the number of people killed across the years from 2012 to 2021 (except in 2016). 
+
+Furthermore, Staten Island has has the least number of people killed in Motor Vehicle crashes among all Boroughs and across all the given years. 
+
+Diving into this further, we look at the number of people injured by vehicle crashes in the same time period to confirm if the above analysis still holds. 
+
+```{r}
+t <- x %>% group_by(YEAR,BOROUGH) %>% 
+    summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+ggplot(t, aes(YEAR, NUMBER.OF.PERSONS.INJURED/1000, fill=BOROUGH, group=BOROUGH)) + geom_bar(stat='identity', position='dodge') + labs(x="Years", y="Number of Persons Injured (in thousands)") + ggtitle('Number of Persons injured in Motor Vehicle Crashes in New York')
+```
+
+It is clear that Brooklyn has the highest number of people injured by vehicle crashes across all years; it is above 10 thousand injuries every year from 2013-2021. Queens is the second most dangerous area in terms of number of people injured by vehicle crashes with above 10 thousand injuries every year from 2013-2019.
+
+Thus, the same trend from above continues with Brooklyn being very unsafe in terms of road safety. 
+
+Now, let us look into what are the top 20 areas (referenced by Zip Codes) in Brooklyn that have the highest number of fatalities (people killed and people injured).
+
+```{r,fig.height=7,fig.width=10}
+#Narrowing down on zipcodes with most accidents (top 20)
+xt <- data2[data2$BOROUGH=='BROOKLYN',]
+xt_new <- xt %>% group_by(ZIP.CODE) %>% 
+    summarise(NUMBER.OF.PERSONS.F = sum(NUMBER.OF.PERSONS.KILLED) + sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+#xt_new <- xt_new[!is.na(xt_new$NUMBER.OF.PERSONS.KILLED),]
+xt_new <- xt_new[order(-xt_new$NUMBER.OF.PERSONS.F),]
+xt_new <- xt_new %>% mutate(ZIP.CODE = as.character(ZIP.CODE))
+#xt <- within(xt, ZIP.CODE <- factor(ZIP.CODE, levels = names(sort(table(ZIP.CODE), decreasing=TRUE))))
+#xt_subset <- xt %>% group_by(ZIP.CODE) %>% slice(1:10)
+ggplot(xt_new[1:20,],aes(x=reorder(ZIP.CODE,-NUMBER.OF.PERSONS.F),y=NUMBER.OF.PERSONS.F)) + geom_bar(stat='identity') +labs(x = 'Zip Codes in Brooklyn',y='Number of fatalities') + ggtitle('Top 20 Zip Codes in Brooklyn with highest Number of fatalities (people killed and people injured)')
+```
+
+Each of these area codes in Brooklyn have more than 2500 fatalities. These area codes could be having the highest number of accidents thus causing more fatalities.
+
+Now, we visualize the impact caused by accidents in each Borough to get an understanding of which Boroughs have been most impacted in terms of number of fatalities, people killed and people innjured.
+
+
+
+```{r fig.width=10}
+library(treemap)
+data2$YEAR <- format(as.POSIXct(data2$CRASH.DATE, format = "%m/%d/%Y"),format = '%Y')
+
+incidents_tma <- data2 %>% group_by(YEAR, BOROUGH) %>% summarise(Total.Hurt = sum(NUMBER.OF.PERSONS.INJURED) + sum(NUMBER.OF.PERSONS.KILLED),.groups = 'drop')
+
+treemap(incidents_tma,
+        index=c("YEAR", "BOROUGH"),
+        vSize = "Total.Hurt",
+        type = "index"
+)
+
+incidents_tma2 <- data2 %>% group_by(YEAR, BOROUGH) %>% summarise(Total.Injured = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+treemap(incidents_tma2,
+        index=c("YEAR", "BOROUGH"),
+        vSize = "Total.Injured",
+        type = "index"
+)
+
+incidents_tma3 <- data2 %>% group_by(YEAR, BOROUGH) %>% summarise(Total.Killed = sum(NUMBER.OF.PERSONS.KILLED),.groups = 'drop')
+
+treemap(incidents_tma3,
+        index=c("YEAR", "BOROUGH"),
+        vSize = "Total.Killed",
+        type = "index"
+)
+```
+
+Brooklyn and Queens seem to have the highest number of accidents throughout. In 2013 and 2014, there were maximum number of those hurt in New York and the majority of these last in Brooklyn and Queens - making these regions concerning. It can be noted here though that Brooklyn and Queens seem to have been consistently high number of people killed and injured every year.
 
 ## How do the boroughs with the most and least accidents compare?
 
@@ -134,6 +257,7 @@ bw$n[bw$BOROUGH == 'BROOKLYN'] <- -bw$n
   scale_fill_brewer(palette = "Set1") + 
   theme_bw()
 ```
+
 Through the comparison histogram, we evaluate the two boroughs Brooklyn, which sees the most number of accidents, and Staten Island, which sees the least. While the distribution of accident count over the time slots remains similar, the magnitude is vastly different. This is due to the fact that Brooklyn has a much higher population and population density (nearly 5 times the number of people per square mile)
 
 ## Can we observe the zip codes with the most accidents on a map?
@@ -156,12 +280,178 @@ ggplot() +
   coord_map()+scale_fill_gradient(low = "lightblue", high = "black")+
   labs(title='Choropleth Map for NYC')
 ```
+
 The least accidents have been observed in Zip Code 10055 (in the metro area of Manhattan) and the highest in 11207 (South-East NY-Brooklyn). This could be due to a smaller area asociated with the zip code as well as population densities.
+
+## What does the accident density over NY look like?
+
+```{r}
+contour<-crash%>%drop_na(LATITUDE,LONGITUDE)%>%filter(LATITUDE>0)%>%filter(LONGITUDE>(-74.5))%>%filter( LONGITUDE<(-50))%>%filter(LATITUDE<41)%>%drop_na(BOROUGH)%>% 
+  group_by(LATITUDE, LONGITUDE, BOROUGH) %>%
+  summarise(Total = n())
+ggplot(contour,aes(x=LONGITUDE,y=LATITUDE))+geom_point(size = 3, alpha = 0.5, position = "jitter")+
+  geom_density_2d(bins = 5, size=1)+theme_minimal() +
+  labs(color='Borough')+labs(title='CONTOUR PLOTS')
+  
+```
+
+
+It is apparent that Brooklyn and Queens have high densities of accidents, however, it is really interesting to see that Manhattan has a trend of increasing density.
+
+## What are leading contributors to accidents in accident-prone areas? Also, which of these factors would lead to the most fatal accidents? 
+
+```{r}
+unique(data$CONTRIBUTING.FACTOR.VEHICLE.1)
+```
+
+```{r}
+data2 <- data[!is.na(data$BOROUGH), ]
+data2 <- data2[-c(8:10)]
+
+data2$TOT.KILLED <- data2$NUMBER.OF.PEDESTRIANS.KILLED + data2$NUMBER.OF.CYCLIST.KILLED + data2$NUMBER.OF.MOTORIST.KILLED
+
+data2$TOT.INJURED <- data2$NUMBER.OF.PEDESTRIANS.INJURED + data2$NUMBER.OF.CYCLIST.INJURED + data2$NUMBER.OF.MOTORIST.INJURED
+
+data2$NUMBER.OF.PERSONS.KILLED <- ifelse(is.na(data2$NUMBER.OF.PERSONS.KILLED),data2$TOT.KILLED,data2$NUMBER.OF.PERSONS.KILLED)
+
+data2$NUMBER.OF.PERSONS.INJURED <- ifelse(is.na(data2$NUMBER.OF.PERSONS.INJURED),data2$TOT.INJURED,data2$NUMBER.OF.PERSONS.INJURED)
+
+data2$CONTRIBUTING.FACTOR.VEHICLE.1[data2$CONTRIBUTING.FACTOR.VEHICLE.1=='Illnes'] <- 'Illness'
+data2$CONTRIBUTING.FACTOR.VEHICLE.2[data2$CONTRIBUTING.FACTOR.VEHICLE.2=='Illnes'] <- 'Illness'
+data2$CONTRIBUTING.FACTOR.VEHICLE.3[data2$CONTRIBUTING.FACTOR.VEHICLE.3=='Illnes'] <- 'Illness'
+data2$CONTRIBUTING.FACTOR.VEHICLE.4[data2$CONTRIBUTING.FACTOR.VEHICLE.4=='Illnes'] <- 'Illness'
+data2$CONTRIBUTING.FACTOR.VEHICLE.5[data2$CONTRIBUTING.FACTOR.VEHICLE.5=='Illnes'] <- 'Illness'
+
+data2$CONTRIBUTING.FACTOR.VEHICLE.1 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.1)
+data2$CONTRIBUTING.FACTOR.VEHICLE.2 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.2)
+data2$CONTRIBUTING.FACTOR.VEHICLE.3 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.3)
+data2$CONTRIBUTING.FACTOR.VEHICLE.4 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.4)
+data2$CONTRIBUTING.FACTOR.VEHICLE.5 <- tolower(data2$CONTRIBUTING.FACTOR.VEHICLE.5)
+
+data2$VEHICLE.TYPE.CODE.1 <- tolower(data2$VEHICLE.TYPE.CODE.1)
+data2$VEHICLE.TYPE.CODE.1[data2$VEHICLE.TYPE.CODE.1=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+data2$VEHICLE.TYPE.CODE.2 <- tolower(data2$VEHICLE.TYPE.CODE.2)
+data2$VEHICLE.TYPE.CODE.2[data2$VEHICLE.TYPE.CODE.2=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+data2$VEHICLE.TYPE.CODE.3 <- tolower(data2$VEHICLE.TYPE.CODE.3)
+data2$VEHICLE.TYPE.CODE.3[data2$VEHICLE.TYPE.CODE.3=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+data2$VEHICLE.TYPE.CODE.4 <- tolower(data2$VEHICLE.TYPE.CODE.4)
+data2$VEHICLE.TYPE.CODE.4[data2$VEHICLE.TYPE.CODE.4=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+data2$VEHICLE.TYPE.CODE.5 <- tolower(data2$VEHICLE.TYPE.CODE.5)
+data2$VEHICLE.TYPE.CODE.5[data2$VEHICLE.TYPE.CODE.5=='station wagon/sport utility vehicle'] <- 'sport utility / station wagon'
+
+
+```
+
+
+```{r}
+#Contributing factors (New York - all Boroughs)
+x <- data2[!is.na(data2$CONTRIBUTING.FACTOR.VEHICLE.1),]
+
+x$NUMBER.OF.PERSONS.F = x$NUMBER.OF.PERSONS.KILLED + x$NUMBER.OF.PERSONS.INJURED
+
+x <- x %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% 
+    summarise(NUMBER.OF.PERSONS.F = sum(NUMBER.OF.PERSONS.F),.groups = 'drop')
+
+x <- x[order(-x$NUMBER.OF.PERSONS.F),]
+
+
+ggplot(x[1:20,], aes(x=NUMBER.OF.PERSONS.F/1000, y = reorder(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.F))) + geom_bar(stat='identity') + labs(x = 'Number of Fatalities (in thousands)', y='Contributing Factors to the Accident') +ggtitle('The Top 20 Contributing Factors leading to fatalities\n (people injured and killed)') +theme_classic(base_size = 9)
+
+```
+The above plot shows the leading contributing factors to fatalities (i.e. people killed and injured). 'Unspecified' contributors have the highest occurance; it could involve a hit-and-run case or when the exact reason behind the accident could not be recorded. It is also clear that driver inattention/distraction and the failure to yield right-of-way are the two highest recorded causes of accidents. This often happens when the driver is under the influence or sleepy or the roads look mostly empty. 
+
+Moving on to the leading contributors in the most accident prone areas, we have the following graph:
+ 
+```{r fig.height=4, fig.width=10}
+x <- data2[!is.na(data2$CONTRIBUTING.FACTOR.VEHICLE.1),]
+
+x
+
+fulldata <- x %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+fulldata <- fulldata[order(-fulldata$NUMBER.OF.PERSONS.INJURED),]
+fulldata <- fulldata[2:20,]
+
+
+brooklyn <- x %>% filter(BOROUGH == 'BROOKLYN') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+brooklyn <- brooklyn[order(-brooklyn$NUMBER.OF.PERSONS.INJURED),]
+
+
+queens <- x %>% filter(BOROUGH == 'QUEENS') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+queens <- queens[order(-queens$NUMBER.OF.PERSONS.INJURED),]
+
+manhattan <- x %>% filter(BOROUGH == 'MANHATTAN') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+manhattan <- manhattan[order(-manhattan$NUMBER.OF.PERSONS.INJURED),]
+
+bronx <- x %>% filter(BOROUGH == 'BRONX') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+bronx <- bronx[order(-bronx$NUMBER.OF.PERSONS.INJURED),]
+
+staten <- x %>% filter(BOROUGH == 'STATEN ISLAND') %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% select(CONTRIBUTING.FACTOR.VEHICLE.1, NUMBER.OF.PERSONS.INJURED) %>% summarise(NUMBER.OF.PERSONS.INJURED = sum(NUMBER.OF.PERSONS.INJURED),.groups = 'drop')
+
+staten <- staten[order(-staten$NUMBER.OF.PERSONS.INJURED),]
+
+fulldata <- merge(x=brooklyn, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+fulldata <- merge(x=queens, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+fulldata <- merge(x=manhattan, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+fulldata <- merge(x=bronx, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+fulldata <- merge(x=staten, y=fulldata, by.x="CONTRIBUTING.FACTOR.VEHICLE.1", by.y="CONTRIBUTING.FACTOR.VEHICLE.1")
+names(fulldata) <- c('CONTRIBUTING.FACTOR.VEHICLE.1', '2','3','4','5','6','7')
+fulldata <- data.frame(fulldata)
+
+ggplot(fulldata) + geom_point(aes(x = X7, y = reorder(CONTRIBUTING.FACTOR.VEHICLE.1,X7),colour="total")) + geom_point(aes(x = X6, y = CONTRIBUTING.FACTOR.VEHICLE.1,colour="brooklyn")) + geom_point(aes(x = X5, y = CONTRIBUTING.FACTOR.VEHICLE.1,colour="queens")) + geom_point(aes(x = X4, y = CONTRIBUTING.FACTOR.VEHICLE.1,colour="manhattan")) + geom_point(aes(x = X3, y = CONTRIBUTING.FACTOR.VEHICLE.1,colour="bronx")) + geom_point(aes(x = X2, y = CONTRIBUTING.FACTOR.VEHICLE.1,colour="staten island")) + scale_color_manual(values=c("red", "blue", "green","black","yellow","brown")) +ggtitle("Contributing factors to crash related injuries in the different Boroughs of New York") +xlab("Number of People Injured") +ylab("Contributing Factors") +theme_linedraw() +theme(plot.title = element_text(hjust = 0.5)) 
+
+```
+
+Here, we observe the division of recorded contributing factors in injuries accidents in different Boroughs. Driver inattention or distraction and the failure to yield right-of-way is the highest cause of accidents in all the Boroughs of New York. These factors are followed by traffic control disregarded and vehicles following too closely. It appears to be that the trend of the highest contributing factors for accidents across all Boroughs is similar.
+
+Note - In this graph, we don't include 'Unspecified' as a contributing factor; due to its sheer frequency, the varied scale does not allow us to see the other contributing factors clearly. However, it must be noted that the highest contributing factor is still the 'Unspecified'.
+
+## What vehicle types are involved in the maximum number of fatal accidents?
+
+```{r}
+counts <- data2 %>% drop_na(VEHICLE.TYPE.CODE.1) %>% group_by(VEHICLE.TYPE.CODE.1) %>% summarize(Count = n()) %>% arrange(desc(Count))
+counts <- head(counts,20)
+counts$Count <- counts$Count/1000
+ggplot(counts, aes(x=counts$Count, y=reorder(counts$VEHICLE.TYPE.CODE.1, counts$Count))) + geom_bar(stat='identity') + labs(x='Number of Accidents (in thousands)',y='Vehicle Type')
+```
+
+SUV's or Station wagons get into the highest number of accidents. Passenger vehicles and sedans form a close second and third respectively to SUV's or Station wagons. This could be because the most seen vehicles on the roads are also SUV's and passenger vehicles. 
+
+We move on to see which of these vehicles cause the highest number of fatalities below. 
+
+```{r}
+data2 <- data2[!is.na(data2$VEHICLE.TYPE.CODE.1),]
+counts <- data2 %>% group_by(VEHICLE.TYPE.CODE.1) %>% summarize(NUMBER.OF.PERSONS.F = sum(NUMBER.OF.PERSONS.KILLED)+sum(NUMBER.OF.PERSONS.INJURED)) %>% arrange(desc(NUMBER.OF.PERSONS.F))
+counts <- head(counts,20)
+ggplot(counts, aes(x=counts$NUMBER.OF.PERSONS.F/1000, y=reorder(counts$VEHICLE.TYPE.CODE.1, counts$NUMBER.OF.PERSONS.F))) + geom_bar(stat='identity') + labs(x='Number of Fatalities (in thousands)',y='Vehicle Type')
+```
+
+The number of victims of the accidents are highest among accidents involving SUV's or station wagons. This is closely followed by the number of victims of the accidents caused by sedans and passenger vehicles. Again, this could be due to the fact that there is a maximum occurrence of such vehicles in the areas.
+
+We can see that there are some number of fatalities caused by Ambulances. Since this is an emergency vehicle taking the sick to the closest hospitals, we should go deeper and see which vehicles are colliding with Ambulances and why.
+
+```{r}
+counts
+x <- data2[!is.na(data2$VEHICLE.TYPE.CODE.1),]
+x <- x[!is.na(x$VEHICLE.TYPE.CODE.2),]
+x <- x[x$VEHICLE.TYPE.CODE.1=='ambulance',]
+x
+counts <- x %>% group_by(VEHICLE.TYPE.CODE.2) %>% summarize(Count = n()) %>% arrange(desc(Count))
+counts <- head(counts,20)
+counts$Count <- counts$Count
+ggplot(counts, aes(x=Count, y=reorder(VEHICLE.TYPE.CODE.2, Count))) + geom_bar(stat='identity') + labs(x='Number of Accidents with an Ambulance',y='Vehicle Type')
+```
+
+From the above graph, it is again apparent that the maximum number of accidents involving ambulances are with SUV's or station wagons. However, we can also see that there were instances of an ambulance crashing with another ambulance. This is interesting because ambulances are exempted from following most road rules. However, if this is leading to more accidents, we should look into this and try to minimize it.
+
 
 ## Which neighborhoods have improved or deteriorated the most?
 
 ```{r}
-
 crash$year<-format(crash$CRASH.DATE, "%Y")
 yearly_2016<-crash%>%drop_na(ZIP.CODE)%>%filter(year<2017)%>%group_by(ZIP.CODE,year) %>%count()%>%
 pivot_wider(names_from = year,
@@ -187,20 +477,5 @@ title = "Most improved and deteriorated zip codes",
 x = "Zip codes",
 y = "Difference in crashes")
 ```
+
 In this graph we have tried to isolate the most improved and deteriorated regions in the time frame (2012-2021) through their zip code. We took a mean across the first 5 years and the next 5 years. The difference was calculated and plotted. The most improved zip code is 10022 and the one which deteriorated the most is 11212. Clearly the former has been successful in implementing ways to curb accidents and the later has not. The reasons for this decrease need to be analyzed carefully and similar policies should be implemented state wide.
-
-## What does the accident density over NY look like?
-
-```{r}
-contour<-crash%>%drop_na(LATITUDE,LONGITUDE)%>%filter(LATITUDE>0)%>%filter(LONGITUDE>(-74.5))%>%filter( LONGITUDE<(-50))%>%filter(LATITUDE<41)%>%drop_na(BOROUGH)%>% 
-  group_by(LATITUDE, LONGITUDE, BOROUGH) %>%
-  summarise(Total = n())
-ggplot(contour,aes(x=LONGITUDE,y=LATITUDE))+geom_point(size = 3, alpha = 0.5, position = "jitter")+
-  geom_density_2d(bins = 5, size=1)+theme_minimal() +
-  labs(color='Borough')+labs(title='CONTOUR PLOTS')
-  
-```
-
-
-It is apparent that Brooklyn and Queens have high densities of accidents, however, it is really interesting to see that Manhattan has a trend of increasing density.
-
