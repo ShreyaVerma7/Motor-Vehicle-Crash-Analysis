@@ -1,3 +1,102 @@
 # Data transformation
 
 We typecasted the date and time columns to the required format. When plotting Borough, Zip Code and Crash time summary statistics, we dropped all instances where the values were not available and grouped by the appropriate variable. Depending on the graph requirements, we took subsets of the data using filtering. When plotting the Choropleth maps, we obtained the geojson data corresponding to NYC Boroughs and Zip Codes, and merged it with our transformed data.
+
+```{r}
+library(dplyr)
+library(Lock5withR)
+library(tidyverse)
+library(patchwork)
+library(ggplot2)
+library(ggnewscale)
+library(hms)
+library(lubridate)
+library(scales)
+library(tigris)
+library(cartography)
+library(sf)
+library(geojsonio)
+library(broom)
+```
+
+
+```{r}
+crash <- read_csv('Motor_Vehicle_Collisions_Crashes.csv',na = c("", "NA", " "))
+names(crash) <- make.names(names(crash), unique=TRUE)
+crash<-crash%>% drop_na(CRASH.TIME)
+crash$CRASH.TIME <- as.hms(crash$CRASH.TIME)
+crash<-crash[ order(crash$CRASH.TIME , decreasing = FALSE ),]
+crash$CRASH.TIME.hr.range <- hour(crash$CRASH.TIME)
+head(crash)
+```
+
+```{r}
+a<-crash%>%group_by(CRASH.TIME.hr.range)%>%count()
+b<-crash%>%filter(NUMBER.OF.PERSONS.KILLED>0)%>%group_by(CRASH.TIME.hr.range)%>%count()
+b$n<-(b$n/a$n)*100
+names(b)<- c('Hours', 'Percentage of fatal accidents')
+head(b)
+```
+
+
+```{r}
+crash$CRASH.DATE <- as.Date(crash$CRASH.DATE , format = "%m/%d/%Y")
+monthly<-crash %>%
+mutate(month = format(CRASH.DATE, "%m")) %>%
+group_by(month) %>%
+count()
+monthly$month=seq(1,12,1)
+monthly$month <- as.Date(paste0("2018-", monthly$month, "-1"))
+monthly$month <- months(as.Date(monthly$month))
+names(monthly)<- c('Months', 'Accident.Count')
+monthly_f<-crash %>%filter(NUMBER.OF.PERSONS.KILLED>0)%>%
+mutate(month = format(CRASH.DATE, "%m")) %>%
+group_by(month) %>%
+count()
+monthly_f$month=seq(1,12,1)
+monthly_f$month <- as.Date(paste0("2018-", monthly_f$month, "-1"))
+names(monthly_f)<- c('Months', 'Fatal.Accident.Count')
+monthly$Fatal.Accident.Count<-monthly_f$Fatal.Accident.Count
+head(monthly)
+```
+```{r}
+daily<-crash %>%
+mutate(month = format(CRASH.DATE, "%m"), day = format(CRASH.DATE, "%d")) %>%
+group_by(month, day) %>%count()
+daily$date=seq(as.Date("2012-01-01"), as.Date("2012-12-31"),1)
+yo<-daily[c('month','day','n')]
+names(yo)<-c('Month', 'Day', 'Accident Count')
+head(yo)
+```
+
+```{r}
+bor<-crash%>% drop_na(BOROUGH)%>% group_by(BOROUGH)%>%count()
+bor$BOROUGH<-str_to_title(bor$BOROUGH)
+bw<-crash%>%filter(BOROUGH =='BROOKLYN' | BOROUGH =='STATEN ISLAND')%>%group_by(BOROUGH,CRASH.TIME.hr.range)%>%count()
+bw$n[bw$BOROUGH == 'BROOKLYN'] <- -bw$n
+head(bw)
+```
+
+```{r}
+contour<-crash%>%drop_na(LATITUDE,LONGITUDE)%>%filter(LATITUDE>0)%>%filter(LONGITUDE>(-74.5))%>%filter( LONGITUDE<(-50))%>%filter(LATITUDE<41)%>%drop_na(BOROUGH)%>% 
+  group_by(LATITUDE, LONGITUDE, BOROUGH) %>%
+  summarise(Total = n())
+head(contour)
+```
+
+```{r}
+crash$year<-format(crash$CRASH.DATE, "%Y")
+yearly_2016<-crash%>%drop_na(ZIP.CODE)%>%filter(year<2017)%>%group_by(ZIP.CODE,year) %>%count()%>%
+pivot_wider(names_from = year,
+values_from = n)
+yearly_2020<-crash%>%drop_na(ZIP.CODE)%>%filter(year>2016)%>%group_by(ZIP.CODE,year) %>%count()%>%
+pivot_wider(names_from = year,
+values_from = n)
+yearly_2016<-yearly_2016 %>% mutate(mean_first = rowMeans(across(where(is.numeric)),na.rm=TRUE))%>%select(ZIP.CODE,mean_first)
+yearly_2020<-yearly_2020 %>% mutate(mean_second = rowMeans(across(where(is.numeric)),na.rm=TRUE))%>%select(ZIP.CODE,mean_second)
+yearly<-merge(x=yearly_2016,y=yearly_2020,by="ZIP.CODE")%>%mutate(Difference=mean_second-mean_first)
+yearly<-yearly[order(yearly$Difference),]
+yearly<-rbind(head(yearly,n=5),tail(yearly,n=5))
+head(yearly)
+```
+
