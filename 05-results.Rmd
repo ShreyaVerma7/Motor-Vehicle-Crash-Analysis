@@ -1,1 +1,206 @@
-# Results
+# Result
+
+## What time slots see the most accidents?
+
+```{r}
+library(tidyverse)
+library(hms)
+library(ggplot2)
+library(lubridate)
+library(scales)
+library(tigris)
+library(cartography)
+library(sf)
+crash <- read_csv('Motor_Vehicle_Collisions_-_Crashes.csv')
+names(crash) <- make.names(names(crash), unique=TRUE)
+crash<-crash%>% drop_na(CRASH.TIME)
+crash$CRASH.TIME <- as.hms(crash$CRASH.TIME)
+crash<-crash[ order(crash$CRASH.TIME , decreasing = FALSE ),]
+crash$CRASH.TIME.hr.range <- hour(crash$CRASH.TIME)
+ggplot(crash,aes(x = CRASH.TIME.hr.range)) +
+  geom_histogram(stat='count')+ 
+  scale_x_continuous(breaks = seq(23, 0, -1), labels=c("23" = "23-24", "22" = "22-23", "21" = "21-22", "20" = "20-21", "19" = "19-20", "18" = "18-19", "17" = "17-18", "16" = "16-17", "15" = "15-16", "14" = "14-15", "13" = "13-14", "12" = "12-13", "11" = "11-12", "10" = "10-11", "9" = "9-10", "8" = "8-9", "7" = "7-8", "6" = "6-7", "5" = "5-6", "4" = "4-5", "3" = "3-4", "1" = "2-3","2" = "1-2", '0' = "0-1"))+
+  coord_flip()+
+  labs(
+    title = "Crashes based on time",
+    x = "Time in hours",
+    y = "Number of crashes")
+
+```
+Looking at the graph generated above, we observe that the peak hours of the evening and afternoon from 2PM to 8PM see the most accidents. This makes sense since the highest number of cars on the road at these times. An unusual peak occurs at the time slot 12AM to 1AM. Since this is the time most public and recreational spots close, it is possible that the higher number of accidents are observed due to greater traffic.
+
+
+```{r}
+a<-crash%>%group_by(CRASH.TIME.hr.range)%>%count()
+b<-crash%>%filter(NUMBER.OF.PERSONS.KILLED>0)%>%group_by(CRASH.TIME.hr.range)%>%count()
+b$n<-(b$n/a$n)*100
+ggplot(b, aes(x = CRASH.TIME.hr.range, y = n)) +
+geom_bar(stat = "identity")+
+scale_x_continuous(breaks = seq(23, 0, -1), labels=c("23" = "23-24", "22" = "22-23", "21" = "21-22", "20" = "20-21", "19" = "19-20", "18" = "18-19", "17" = "17-18", "16" = "16-17", "15" = "15-16", "14" = "14-15", "13" = "13-14", "12" = "12-13", "11" = "11-12", "10" = "10-11", "9" = "9-10", "8" = "8-9", "7" = "7-8", "6" = "6-7", "5" = "5-6", "4" = "4-5", "3" = "3-4", "1" = "2-3","2" = "1-2", '0' = "0-1"))+
+coord_flip()+
+labs(
+title = "Percentage of fatal crashes",
+x = "Time in hours",
+y = "Percentage value")
+
+```
+We see the highest proportion of fatal accidents in the later hours of the day. Whilst the number of accidents may be more during the evening, the proportion of them being fatal is much lesser. This could be due to lower visibility, driver intoxication or over-speeding. The police and ambulance services should be highly vigilant at these times to prevent any loss of life.
+
+## Which months see the most number of accidents?
+
+```{r}
+crash$CRASH.DATE <- as.Date(crash$CRASH.DATE , format = "%m/%d/%Y")
+monthly<-crash %>%
+mutate(month = format(CRASH.DATE, "%m")) %>%
+group_by(month) %>%
+count()
+monthly$month=seq(1,12,1)
+monthly$month <- as.Date(paste0("2018-", monthly$month, "-1"))
+ggplot(monthly, aes(x=month, y=n)) +
+geom_line() +
+xlab("")+scale_x_date(labels = date_format("%b"))+
+labs(
+title = "Crashes per month",
+x = "Months",
+y = "Number of crashes")
+
+```
+
+October sees the highest number of accidents. This could be due to the Halloween weekend which creates greater road traffic. Additionally, the change to shorter nights during this month causes visibility issues.  
+
+
+```{r}
+monthly_f<-crash %>%filter(NUMBER.OF.PERSONS.KILLED>0)%>%
+mutate(month = format(CRASH.DATE, "%m")) %>%
+group_by(month) %>%
+count()
+monthly_f$month=seq(1,12,1)
+monthly_f$month <- as.Date(paste0("2018-", monthly_f$month, "-1"))
+ggplot(monthly_f,aes(x=month, y=n)) +
+geom_line() +
+xlab("")+scale_x_date(labels = date_format("%b"))+
+labs(
+title = "Fatal crashes per month",
+x = "Months",
+y = "Number of fatal crashes")
+
+
+
+#Get highest month
+```
+
+
+The highest number of fatal crashes is observed during September. This could be caused by greater road traffic due to nicer weather, schools being back in session, and the Labor Day weekend. Days getting shorter may also be a contributing factor.
+
+## What days see the most number of accidents
+
+```{r}
+daily<-crash %>%
+mutate(month = format(CRASH.DATE, "%m"), day = format(CRASH.DATE, "%d")) %>%
+group_by(month, day) %>%count()
+daily$date=seq(as.Date("2012-01-01"), as.Date("2012-12-31"),1)
+ggplot(daily, aes(x=date, y=n)) +
+  geom_line() + 
+  xlab("")+scale_x_date(labels = date_format("%b"),limit=c(as.Date("2012-01-01"),as.Date("2012-12-31")))+
+  labs(
+    title = "Crashes based on day",
+    x = "Days",
+    y = "Number of crashes")
+daily_f<-crash %>%
+mutate(month = format(CRASH.DATE, "%m"), day = format(CRASH.DATE, "%d")) %>%
+group_by(month, day) %>%tally(sort = TRUE)
+
+```
+Most crashes are observed on 12th September and least on 29th Feb. There is no particular reason for the former being this way. 29th Feb was naturally the day the fewest accidents were observed as the date occurs once every 4 years.
+
+## How do the boroughs with the most and least accidents compare?
+
+```{r}
+bor<-crash%>% drop_na(BOROUGH)%>% group_by(BOROUGH)%>%count()
+bor$BOROUGH<-str_to_title(bor$BOROUGH)
+bw<-crash%>%filter(BOROUGH =='BROOKLYN' | BOROUGH =='STATEN ISLAND')%>%group_by(BOROUGH,CRASH.TIME.hr.range)%>%count()
+bw$n[bw$BOROUGH == 'BROOKLYN'] <- -bw$n
+ ggplot(bw, aes(x = CRASH.TIME.hr.range, y = n, fill = BOROUGH)) + 
+  geom_bar(data= subset(bw, BOROUGH == "BROOKLYN"), stat = "identity") + 
+  geom_bar(data= subset(bw, BOROUGH == "STATEN ISLAND"), stat = "identity") + 
+  scale_x_continuous(breaks = seq(23, 0, -1), labels=c("23" = "23-24", "22" = "22-23", "21" = "21-22", "20" = "20-21", "19" = "19-20", "18" = "18-19", "17" = "17-18", "16" = "16-17", "15" = "15-16", "14" = "14-15", "13" = "13-14", "12" = "12-13", "11" = "11-12", "10" = "10-11", "9" = "9-10", "8" = "8-9", "7" = "7-8", "6" = "6-7", "5" = "5-6", "4" = "4-5", "3" = "3-4", "1" = "1-2","2" = "2-3", '0' = "0-1"))+
+  scale_y_continuous(breaks = seq(-40000, 40000, 10000), 
+                     labels = paste0(as.character(c(4:0, 1:4)), "k")) + 
+  coord_flip() + 
+   labs(
+    title = "Crashes comparison between Brooklyn and Staten Island",
+    x = "Time in hours",
+    y = "Number of crashes")+
+  scale_fill_brewer(palette = "Set1") + 
+  theme_bw()
+```
+Through the comparison histogram, we evaluate the two boroughs Brooklyn, which sees the most number of accidents, and Staten Island, which sees the least. While the distribution of accident count over the time slots remains similar, the magnitude is vastly different. This is due to the fact that Brooklyn has a much higher population and population density (nearly 5 times the number of people per square mile)
+
+## Can we observe the zip codes with the most accidents on a map?
+
+```{r}
+wzc<-crash%>%group_by(ZIP.CODE)%>%tally(sort=TRUE)%>%slice(1:10)
+wzc
+#Mention large number of missing values
+sd<-geojson_read('/Users/sarthakbhargava/Downloads/ZIP-CODES.geojson',what='sp')
+wzc<-crash%>%group_by(ZIP.CODE)%>%tally()
+names(wzc)<-c('ZIP.CODE', 'Count')
+wzc$ZIP.CODE<-as.character(wzc$ZIP.CODE)
+spdf_fortified <- tidy(sd,region='postalCode')
+spdf_fortified = spdf_fortified %>%
+  left_join(. , wzc, by=c("id"="ZIP.CODE"))
+spdf_fortified$n[is.na(spdf_fortified$Count)] = 0.001
+ggplot() +
+  geom_polygon(data = spdf_fortified, aes(fill = Count, x = long, y = lat, group = group)) +
+  theme_void() +
+  coord_map()+scale_fill_gradient(low = "lightblue", high = "black")+
+  labs(title='Choropleth Map for NYC')
+```
+The least accidents have been observed in Zip Code 10055 (in the metro area of Manhattan) and the highest in 11207 (South-East NY-Brooklyn). This could be due to a smaller area asociated with the zip code as well as population densities.
+
+## Which neighborhoods have improved or deteriorated the most?
+
+```{r}
+
+crash$year<-format(crash$CRASH.DATE, "%Y")
+yearly_2016<-crash%>%drop_na(ZIP.CODE)%>%filter(year<2017)%>%group_by(ZIP.CODE,year) %>%count()%>%
+pivot_wider(names_from = year,
+values_from = n)
+yearly_2020<-crash%>%drop_na(ZIP.CODE)%>%filter(year>2016)%>%group_by(ZIP.CODE,year) %>%count()%>%
+pivot_wider(names_from = year,
+values_from = n)
+yearly_2016<-yearly_2016 %>% mutate(mean_first = rowMeans(across(where(is.numeric)),na.rm=TRUE))%>%select(ZIP.CODE,mean_first)
+yearly_2020<-yearly_2020 %>% mutate(mean_second = rowMeans(across(where(is.numeric)),na.rm=TRUE))%>%select(ZIP.CODE,mean_second)
+yearly<-merge(x=yearly_2016,y=yearly_2020,by="ZIP.CODE")%>%mutate(Difference=mean_second-mean_first)
+yearly<-yearly[order(yearly$Difference),]
+yearly<-rbind(head(yearly,n=5),tail(yearly,n=5))
+LtoM <-colorRampPalette(c('green', 'red' ))
+Mid <- "snow3"
+MtoH <-colorRampPalette(c('red', 'black'))
+ggplot(data = yearly, aes(x = reorder(factor(ZIP.CODE),Difference), y = Difference,
+fill=Difference)) +
+geom_bar(stat = 'identity') +
+scale_fill_gradient2(low=LtoM(100), mid='snow3',
+high=MtoH(100), space='Lab')+
+labs(
+title = "Most improved and deteriorated zip codes",
+x = "Zip codes",
+y = "Difference in crashes")
+```
+In this graph we have tried to isolate the most improved and deteriorated regions in the time frame (2012-2021) through their zip code. We took a mean across the first 5 years and the next 5 years. The difference was calculated and plotted. The most improved zip code is 10022 and the one which deteriorated the most is 11212. Clearly the former has been successful in implementing ways to curb accidents and the later has not. The reasons for this decrease need to be analyzed carefully and similar policies should be implemented state wide.
+
+## What does the accident density over NY look like?
+
+```{r}
+contour<-crash%>%drop_na(LATITUDE,LONGITUDE)%>%filter(LATITUDE>0)%>%filter(LONGITUDE>(-74.5))%>%filter( LONGITUDE<(-50))%>%filter(LATITUDE<41)%>%drop_na(BOROUGH)%>% 
+  group_by(LATITUDE, LONGITUDE, BOROUGH) %>%
+  summarise(Total = n())
+ggplot(contour,aes(x=LONGITUDE,y=LATITUDE))+geom_point(size = 3, alpha = 0.5, position = "jitter")+
+  geom_density_2d(bins = 5, size=1)+theme_minimal() +
+  labs(color='Borough')+labs(title='CONTOUR PLOTS')
+  
+```
+
+
+It is apparent that Brooklyn and Queens have high densities of accidents, however, it is really interesting to see that Manhattan has a trend of increasing density.
+
