@@ -208,7 +208,7 @@ x <- data2[!is.na(data2$CONTRIBUTING.FACTOR.VEHICLE.1),]
 x$NUMBER.OF.PERSONS.F = x$NUMBER.OF.PERSONS.KILLED + x$NUMBER.OF.PERSONS.INJURED
 
 x <- x %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% 
-    summarise(NUMBER.OF.PERSONS.TOT.HURT = sum(NUMBER.OF.PERSONS.TOT.HURT),.groups = 'drop')
+    summarise(NUMBER.OF.PERSONS.TOT.HURT = sum(NUMBER.OF.PERSONS.F),.groups = 'drop')
 
 x <- x[order(-x$NUMBER.OF.PERSONS.TOT.HURT),]
 head(x)

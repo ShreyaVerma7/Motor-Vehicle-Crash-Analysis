@@ -135,6 +135,228 @@
 <div id="data-transformation" class="section level1" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Data transformation</h1>
 <p>We typecasted the date and time columns to the required format. When plotting Borough, Zip Code and Crash time summary statistics, we dropped all instances where the values were not available and grouped by the appropriate variable. Depending on the graph requirements, we took subsets of the data using filtering. When plotting the Choropleth maps, we obtained the geojson data corresponding to NYC Boroughs and Zip Codes, and merged it with our transformed data.</p>
+<p>The below dataframe represents our datatset with the date and time in appropriate formats and without NA values for the same.</p>
+<pre><code>## # A tibble: 6 × 30
+##   CRASH.DATE CRASH.TIME BOROUGH  ZIP.CODE LATITUDE LONGITUDE LOCATION               ON.STREET.NAME CROSS.STREET.NA… OFF.STREET.NAME NUMBER.OF.PERSO…
+##   &lt;chr&gt;      &lt;time&gt;     &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                  &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;                      &lt;dbl&gt;
+## 1 04/14/2021 00&#39;00&quot;     BROOKLYN    11203     40.6     -73.9 (40.64664, -73.9246)   KINGS HIGHWAY  BEVERLEY ROAD    &lt;NA&gt;                           2
+## 2 04/14/2021 00&#39;00&quot;     &lt;NA&gt;           NA     40.6     -74.0 (40.601864, -74.00232) BATH AVENUE    &lt;NA&gt;             &lt;NA&gt;                           1
+## 3 04/14/2021 00&#39;00&quot;     BROOKLYN    11235     40.6     -74.0 (40.587894, -73.95504) &lt;NA&gt;           &lt;NA&gt;             1415      AVEN…                0
+## 4 04/14/2021 00&#39;00&quot;     BRONX       10460     40.8     -73.9 (40.835827, -73.89068) &lt;NA&gt;           &lt;NA&gt;             1600      BOST…                0
+## 5 04/15/2021 00&#39;00&quot;     QUEENS      11377     40.7     -73.9 (40.7357, -73.90377)   51 AVENUE      61 STREET        &lt;NA&gt;                           0
+## 6 04/15/2021 00&#39;00&quot;     &lt;NA&gt;           NA     40.8     -73.9 (40.780437, -73.94989) EAST 90 STREET &lt;NA&gt;             &lt;NA&gt;                           0
+## # … with 19 more variables: NUMBER.OF.PERSONS.KILLED &lt;dbl&gt;, NUMBER.OF.PEDESTRIANS.INJURED &lt;dbl&gt;, NUMBER.OF.PEDESTRIANS.KILLED &lt;dbl&gt;,
+## #   NUMBER.OF.CYCLIST.INJURED &lt;dbl&gt;, NUMBER.OF.CYCLIST.KILLED &lt;dbl&gt;, NUMBER.OF.MOTORIST.INJURED &lt;dbl&gt;, NUMBER.OF.MOTORIST.KILLED &lt;dbl&gt;,
+## #   CONTRIBUTING.FACTOR.VEHICLE.1 &lt;chr&gt;, CONTRIBUTING.FACTOR.VEHICLE.2 &lt;chr&gt;, CONTRIBUTING.FACTOR.VEHICLE.3 &lt;chr&gt;,
+## #   CONTRIBUTING.FACTOR.VEHICLE.4 &lt;chr&gt;, CONTRIBUTING.FACTOR.VEHICLE.5 &lt;chr&gt;, COLLISION_ID &lt;dbl&gt;, VEHICLE.TYPE.CODE.1 &lt;chr&gt;,
+## #   VEHICLE.TYPE.CODE.2 &lt;chr&gt;, VEHICLE.TYPE.CODE.3 &lt;chr&gt;, VEHICLE.TYPE.CODE.4 &lt;chr&gt;, VEHICLE.TYPE.CODE.5 &lt;chr&gt;, CRASH.TIME.hr.range &lt;int&gt;</code></pre>
+<p>We used the dataframe above to create a bar chart for the percentage of fatal accidents.</p>
+<pre><code>## # A tibble: 6 × 2
+## # Groups:   Hours [6]
+##   Hours `Percentage of fatal accidents`
+##   &lt;int&gt;                           &lt;dbl&gt;
+## 1     0                           0.204
+## 2     1                           0.307
+## 3     2                           0.338
+## 4     3                           0.468
+## 5     4                           0.541
+## 6     5                           0.359</code></pre>
+<p>This dataframe was used to get a line chart to observe the months with most accidents and fatal accidents.</p>
+<pre><code>## # A tibble: 6 × 3
+## # Groups:   Months [6]
+##   Months   Accident.Count Fatal.Accident.Count
+##   &lt;chr&gt;             &lt;int&gt;                &lt;int&gt;
+## 1 January          141170                  167
+## 2 February         130394                  138
+## 3 March            144807                  138
+## 4 April            133905                  168
+## 5 May              154104                  179
+## 6 June             156078                  207</code></pre>
+<p>This dataframe was used to get a line chart to observe the days with most accidents and fatal accidents.</p>
+<pre><code>## # A tibble: 6 × 3
+## # Groups:   Month, Day [6]
+##   Month Day   `Accident Count`
+##   &lt;chr&gt; &lt;chr&gt;            &lt;int&gt;
+## 1 01    01                3538
+## 2 01    02                4183
+## 3 01    03                4308
+## 4 01    04                4150
+## 5 01    05                4070
+## 6 01    06                4563</code></pre>
+<p>To compare the worst and best Boroughs in terms of accident count we transformed the data in the following fashion</p>
+<pre><code>## # A tibble: 6 × 3
+## # Groups:   BOROUGH, CRASH.TIME.hr.range [6]
+##   BOROUGH  CRASH.TIME.hr.range      n
+##   &lt;chr&gt;                  &lt;int&gt;  &lt;int&gt;
+## 1 BROOKLYN                   0 -11590
+## 2 BROOKLYN                   1  -5928
+## 3 BROOKLYN                   2  -4511
+## 4 BROOKLYN                   3  -3772
+## 5 BROOKLYN                   4  -4210
+## 6 BROOKLYN                   5  -4581</code></pre>
+<p>To observe the contour graph we created the folowing dataframe</p>
+<pre><code>## # A tibble: 6 × 4
+## # Groups:   LATITUDE, LONGITUDE [6]
+##   LATITUDE LONGITUDE BOROUGH       Total
+##      &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;         &lt;int&gt;
+## 1     40.5     -74.2 STATEN ISLAND     2
+## 2     40.5     -74.2 STATEN ISLAND     1
+## 3     40.5     -74.2 STATEN ISLAND     1
+## 4     40.5     -74.2 STATEN ISLAND     1
+## 5     40.5     -74.2 STATEN ISLAND     1
+## 6     40.5     -74.2 STATEN ISLAND     1</code></pre>
+<p>To see the most improved and deteriorated zip codes we created the dataframe below</p>
+<pre><code>##    ZIP.CODE mean_first mean_second Difference
+## 21    10022     1979.2       988.2     -991.0
+## 15    10016     2009.2      1077.0     -932.2
+## 18    10019     1956.0      1234.2     -721.8
+## 35    10036     1879.6      1186.2     -693.4
+## 2     10001     1809.2      1145.8     -663.4
+## 88    10454      709.4       813.6      104.2</code></pre>
+<p>Since, we find NA values in Number of people killed and/or injured, we replace those values with the individual sum of pedestrians, cyclists, motorists killed and/or injured respectively.</p>
+<pre><code>##    CRASH.DATE CRASH.TIME       BOROUGH ZIP.CODE LATITUDE LONGITUDE              LOCATION NUMBER.OF.PERSONS.INJURED NUMBER.OF.PERSONS.KILLED
+## 2  04/13/2021      21:35      BROOKLYN    11217 40.68358 -73.97617 (40.68358, -73.97617)                         1                        0
+## 4  04/13/2021      16:00      BROOKLYN    11222       NA        NA                  &lt;NA&gt;                         0                        0
+## 7  04/13/2021      17:30        QUEENS    11106       NA        NA                  &lt;NA&gt;                         0                        0
+## 11 04/11/2021      21:06      BROOKLYN    11226       NA        NA                  &lt;NA&gt;                         1                        0
+## 12 04/15/2021      20:00 STATEN ISLAND    10304       NA        NA                  &lt;NA&gt;                         0                        0
+## 14 05/21/2019      22:50      BROOKLYN    11201 40.69754 -73.98312 (40.69754, -73.98312)                         0                        0
+##    NUMBER.OF.PEDESTRIANS.INJURED NUMBER.OF.PEDESTRIANS.KILLED NUMBER.OF.CYCLIST.INJURED NUMBER.OF.CYCLIST.KILLED NUMBER.OF.MOTORIST.INJURED
+## 2                              1                            0                         0                        0                          0
+## 4                              0                            0                         0                        0                          0
+## 7                              0                            0                         0                        0                          0
+## 11                             1                            0                         0                        0                          0
+## 12                             0                            0                         0                        0                          0
+## 14                             0                            0                         0                        0                          0
+##    NUMBER.OF.MOTORIST.KILLED TOT.KILLED TOT.INJURED
+## 2                          0          0           1
+## 4                          0          0           0
+## 7                          0          0           0
+## 11                         0          0           1
+## 12                         0          0           0
+## 14                         0          0           0</code></pre>
+<p>Here, we Groupby Borough and Zip Code to get Number of Persons Killed and Injured in the years 2012-2021.</p>
+<pre><code>## # A tibble: 6 × 3
+##   YEAR  BOROUGH       NUMBER.OF.PERSONS.KILLED
+##   &lt;chr&gt; &lt;chr&gt;                            &lt;int&gt;
+## 1 2012  BRONX                               17
+## 2 2012  BROOKLYN                            33
+## 3 2012  MANHATTAN                           21
+## 4 2012  QUEENS                              28
+## 5 2012  STATEN ISLAND                       11
+## 6 2013  BRONX                               32</code></pre>
+<p>Since Brooklyn had the most number of accidents, let us look into what are the top 20 areas (referenced by Zip Codes) in Brooklyn that have the highest number of fatalities (people killed and people injured).</p>
+<pre><code>## # A tibble: 6 × 2
+##   ZIP.CODE NUMBER.OF.PERSONS.TOT.HURT
+##   &lt;chr&gt;                         &lt;int&gt;
+## 1 11207                          8787
+## 2 11203                          6664
+## 3 11236                          6581
+## 4 11212                          5894
+## 5 11226                          5435
+## 6 11208                          5185</code></pre>
+<p>To visualize the impact caused by accidents in each Borough with thr help of a treemap, we made the following data transformations.</p>
+<pre><code>## # A tibble: 6 × 3
+##   YEAR  BOROUGH       Total.Hurt
+##   &lt;chr&gt; &lt;chr&gt;              &lt;int&gt;
+## 1 2012  BRONX               2895
+## 2 2012  BROOKLYN            7559
+## 3 2012  MANHATTAN           3891
+## 4 2012  QUEENS              5534
+## 5 2012  STATEN ISLAND       1256
+## 6 2013  BRONX               6291</code></pre>
+<pre><code>## # A tibble: 6 × 3
+##   YEAR  BOROUGH       Total.Injured
+##   &lt;chr&gt; &lt;chr&gt;                 &lt;int&gt;
+## 1 2012  BRONX                  2878
+## 2 2012  BROOKLYN               7526
+## 3 2012  MANHATTAN              3870
+## 4 2012  QUEENS                 5506
+## 5 2012  STATEN ISLAND          1245
+## 6 2013  BRONX                  6259</code></pre>
+<pre><code>## # A tibble: 6 × 3
+##   YEAR  BOROUGH       Total.Killed
+##   &lt;chr&gt; &lt;chr&gt;                &lt;int&gt;
+## 1 2012  BRONX                   17
+## 2 2012  BROOKLYN                33
+## 3 2012  MANHATTAN               21
+## 4 2012  QUEENS                  28
+## 5 2012  STATEN ISLAND           11
+## 6 2013  BRONX                   32</code></pre>
+<p>We make transformations to visualize Contributing Factors to accidents while also editing some spelling mistakes.</p>
+<pre><code>##    CRASH.DATE CRASH.TIME       BOROUGH ZIP.CODE LATITUDE LONGITUDE              LOCATION NUMBER.OF.PERSONS.INJURED NUMBER.OF.PERSONS.KILLED
+## 2  04/13/2021      21:35      BROOKLYN    11217 40.68358 -73.97617 (40.68358, -73.97617)                         1                        0
+## 4  04/13/2021      16:00      BROOKLYN    11222       NA        NA                  &lt;NA&gt;                         0                        0
+## 7  04/13/2021      17:30        QUEENS    11106       NA        NA                  &lt;NA&gt;                         0                        0
+## 11 04/11/2021      21:06      BROOKLYN    11226       NA        NA                  &lt;NA&gt;                         1                        0
+## 12 04/15/2021      20:00 STATEN ISLAND    10304       NA        NA                  &lt;NA&gt;                         0                        0
+## 14 05/21/2019      22:50      BROOKLYN    11201 40.69754 -73.98312 (40.69754, -73.98312)                         0                        0
+##    NUMBER.OF.PEDESTRIANS.INJURED NUMBER.OF.PEDESTRIANS.KILLED NUMBER.OF.CYCLIST.INJURED NUMBER.OF.CYCLIST.KILLED NUMBER.OF.MOTORIST.INJURED
+## 2                              1                            0                         0                        0                          0
+## 4                              0                            0                         0                        0                          0
+## 7                              0                            0                         0                        0                          0
+## 11                             1                            0                         0                        0                          0
+## 12                             0                            0                         0                        0                          0
+## 14                             0                            0                         0                        0                          0
+##    NUMBER.OF.MOTORIST.KILLED  CONTRIBUTING.FACTOR.VEHICLE.1 CONTRIBUTING.FACTOR.VEHICLE.2 CONTRIBUTING.FACTOR.VEHICLE.3
+## 2                          0                    unspecified                          &lt;NA&gt;                          &lt;NA&gt;
+## 4                          0          following too closely                   unspecified                          &lt;NA&gt;
+## 7                          0 driver inattention/distraction                   unspecified                          &lt;NA&gt;
+## 11                         0            passing too closely                          &lt;NA&gt;                          &lt;NA&gt;
+## 12                         0                    unspecified                          &lt;NA&gt;                          &lt;NA&gt;
+## 14                         0 passing or lane usage improper                   unspecified                          &lt;NA&gt;
+##    CONTRIBUTING.FACTOR.VEHICLE.4 CONTRIBUTING.FACTOR.VEHICLE.5 COLLISION_ID VEHICLE.TYPE.CODE.1 VEHICLE.TYPE.CODE.2 VEHICLE.TYPE.CODE.3
+## 2                           &lt;NA&gt;                          &lt;NA&gt;      4407147               sedan                &lt;NA&gt;                &lt;NA&gt;
+## 4                           &lt;NA&gt;                          &lt;NA&gt;      4407811               sedan                &lt;NA&gt;                &lt;NA&gt;
+## 7                           &lt;NA&gt;                          &lt;NA&gt;      4408019               sedan               sedan                &lt;NA&gt;
+## 11                          &lt;NA&gt;                          &lt;NA&gt;      4406488                taxi                &lt;NA&gt;                &lt;NA&gt;
+## 12                          &lt;NA&gt;                          &lt;NA&gt;      4408310               sedan                &lt;NA&gt;                &lt;NA&gt;
+## 14                          &lt;NA&gt;                          &lt;NA&gt;      4136992                �mbu                taxi                &lt;NA&gt;
+##    VEHICLE.TYPE.CODE.4 VEHICLE.TYPE.CODE.5 TOT.KILLED TOT.INJURED
+## 2                 &lt;NA&gt;                &lt;NA&gt;          0           1
+## 4                 &lt;NA&gt;                &lt;NA&gt;          0           0
+## 7                 &lt;NA&gt;                &lt;NA&gt;          0           0
+## 11                &lt;NA&gt;                &lt;NA&gt;          0           1
+## 12                &lt;NA&gt;                &lt;NA&gt;          0           0
+## 14                &lt;NA&gt;                &lt;NA&gt;          0           0</code></pre>
+<p>To view the Contributing Factors against the number of people hurt in accidents, we make the following transformation.</p>
+<pre><code>## # A tibble: 6 × 2
+##   CONTRIBUTING.FACTOR.VEHICLE.1  NUMBER.OF.PERSONS.TOT.HURT
+##   &lt;chr&gt;                                               &lt;int&gt;
+## 1 unspecified                                        117775
+## 2 driver inattention/distraction                      66164
+## 3 failure to yield right-of-way                       37378
+## 4 traffic control disregarded                         13341
+## 5 following too closely                               12137
+## 6 other vehicular                                      8149</code></pre>
+<p>To view the leading contributors in the most accident prone areas, we make the following transformation.</p>
+<pre><code>##    CONTRIBUTING.FACTOR.VEHICLE.1   X2   X3    X4    X5    X6    X7
+## 1            alcohol involvement  299  974   772  1693  1820  5558
+## 2               backing unsafely  179 1065  1185  1541  1919  5889
+## 3 driver inattention/distraction 2817 9295 12315 20678 20888 65993
+## 4            driver inexperience  267  745   793  1355  1725  4885
+## 5  failure to yield right-of-way 1523 4762  5165 12902 12837 37189
+## 6                fatigued/drowsy  266  744  1173  1520  2086  5789</code></pre>
+<p>We make the following transformations to view vehicle types are involved in the maximum number of fatal accidents.</p>
+<pre><code>## # A tibble: 6 × 2
+##   VEHICLE.TYPE.CODE.1           Count
+##   &lt;chr&gt;                         &lt;dbl&gt;
+## 1 sport utility / station wagon 367. 
+## 2 passenger vehicle             310. 
+## 3 sedan                         296. 
+## 4 taxi                           57.8
+## 5 pick-up truck                  27.0
+## 6 4 dr sedan                     26.9</code></pre>
+<p>To see which of these vehicles cause the highest number of fatalities we make the transformations given below.</p>
+<pre><code>## # A tibble: 6 × 2
+##   VEHICLE.TYPE.CODE.2           Count
+##   &lt;chr&gt;                         &lt;int&gt;
+## 1 sport utility / station wagon   879
+## 2 passenger vehicle               800
+## 3 sedan                           777
+## 4 ambulance                       192
+## 5 unknown                         190
+## 6 taxi                            142</code></pre>
 
 </div>
             </section>
