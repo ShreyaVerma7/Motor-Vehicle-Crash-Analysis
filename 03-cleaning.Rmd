@@ -18,8 +18,7 @@ library(sf)
 library(geojsonio)
 library(broom)
 ```
-
-
+The below dataframe represents our datatset with the date and time in appropriate formats and without NA values for the same.
 ```{r}
 crash <- read_csv('Motor_Vehicle_Collisions_Crashes.csv',na = c("", "NA", " "))
 names(crash) <- make.names(names(crash), unique=TRUE)
@@ -29,6 +28,7 @@ crash<-crash[ order(crash$CRASH.TIME , decreasing = FALSE ),]
 crash$CRASH.TIME.hr.range <- hour(crash$CRASH.TIME)
 head(crash)
 ```
+We used the dataframe above to create a bar chart for the percentage of fatal accidents.
 
 ```{r}
 a<-crash%>%group_by(CRASH.TIME.hr.range)%>%count()
@@ -37,6 +37,7 @@ b$n<-(b$n/a$n)*100
 names(b)<- c('Hours', 'Percentage of fatal accidents')
 head(b)
 ```
+This dataframe was used to get a line chart to observe the months with most accidents and fatal accidents.
 
 ```{r}
 crash$CRASH.DATE <- as.Date(crash$CRASH.DATE , format = "%m/%d/%Y")
@@ -58,6 +59,8 @@ names(monthly_f)<- c('Months', 'Fatal.Accident.Count')
 monthly$Fatal.Accident.Count<-monthly_f$Fatal.Accident.Count
 head(monthly)
 ```
+This dataframe was used to get a line chart to observe the days with most accidents and fatal accidents.
+
 ```{r}
 daily<-crash %>%
 mutate(month = format(CRASH.DATE, "%m"), day = format(CRASH.DATE, "%d")) %>%
@@ -68,6 +71,8 @@ names(yo)<-c('Month', 'Day', 'Accident Count')
 head(yo)
 ```
 
+To compare the worst and best Boroughs in terms of accident count we transformed the data in the following fashion
+
 ```{r}
 bor<-crash%>% drop_na(BOROUGH)%>% group_by(BOROUGH)%>%count()
 bor$BOROUGH<-str_to_title(bor$BOROUGH)
@@ -75,6 +80,7 @@ bw<-crash%>%filter(BOROUGH =='BROOKLYN' | BOROUGH =='STATEN ISLAND')%>%group_by(
 bw$n[bw$BOROUGH == 'BROOKLYN'] <- -bw$n
 head(bw)
 ```
+To observe the contour graph we created the folowing dataframe
 
 ```{r}
 contour<-crash%>%drop_na(LATITUDE,LONGITUDE)%>%filter(LATITUDE>0)%>%filter(LONGITUDE>(-74.5))%>%filter( LONGITUDE<(-50))%>%filter(LATITUDE<41)%>%drop_na(BOROUGH)%>% 
@@ -82,6 +88,7 @@ contour<-crash%>%drop_na(LATITUDE,LONGITUDE)%>%filter(LATITUDE>0)%>%filter(LONGI
   summarise(Total = n())
 head(contour)
 ```
+To see the most improved and deteriorated zip codes we created the dataframe below
 
 ```{r}
 crash$year<-format(crash$CRASH.DATE, "%Y")
@@ -99,6 +106,8 @@ yearly<-rbind(head(yearly,n=5),tail(yearly,n=5))
 head(yearly)
 ```
 
+Since, we find NA values in Number of people killed and/or injured, we replace those values with the individual sum of pedestrians, cyclists, motorists killed and/or injured respectively.
+
 ```{r}
 data <- read.csv(file = 'Motor_Vehicle_Collisions_Crashes.csv', na.strings = c("", "NA", " "))
 cols = c('BOROUGH','ZIP.CODE','LATITUDE','LONGITUDE','LOCATION')
@@ -115,6 +124,9 @@ data2$NUMBER.OF.PERSONS.INJURED <- ifelse(is.na(data2$NUMBER.OF.PERSONS.INJURED)
 
 head(data2)
 ```
+
+Here, we Groupby Borough and Zip Code to get Number of Persons Killed and Injured in the years 2012-2021.
+
 ```{r}
 
 x <- data2
@@ -123,6 +135,8 @@ t <- x %>% group_by(YEAR,BOROUGH) %>%
     summarise(NUMBER.OF.PERSONS.KILLED = sum(NUMBER.OF.PERSONS.KILLED),.groups = 'drop')
 head(t)
 ```
+
+Since Brooklyn had the most number of accidents, let us look into what are the top 20 areas (referenced by Zip Codes) in Brooklyn that have the highest number of fatalities (people killed and people injured).
 
 ```{r}
 xB <- data2[data2$BOROUGH=='BROOKLYN',]
@@ -133,6 +147,7 @@ xB_new <- xB_new %>% mutate(ZIP.CODE = as.character(ZIP.CODE))
 head(xB_new)
 ```
 
+To visualize the impact caused by accidents in each Borough with thr help of a treemap, we made the following data transformations.
 
 ```{r}
 data2$YEAR <- format(as.POSIXct(data2$CRASH.DATE, format = "%m/%d/%Y"),format = '%Y')
@@ -144,6 +159,8 @@ head(incidents_tma2)
 incidents_tma3 <- data2 %>% group_by(YEAR, BOROUGH) %>% summarise(Total.Killed = sum(NUMBER.OF.PERSONS.KILLED),.groups = 'drop')
 head(incidents_tma3)
 ```
+
+We make transformations to visualize Contributing Factors to accidents while also editing some spelling mistakes.
 
 ```{r}
 data2 <- data[!is.na(data$BOROUGH), ]
@@ -182,17 +199,22 @@ data2$VEHICLE.TYPE.CODE.5[data2$VEHICLE.TYPE.CODE.5=='station wagon/sport utilit
 
 head(data2)
 ```
+
+To view the Contributing Factors against the number of people hurt in accidents, we make the following transformation.
+
 ```{r}
 x <- data2[!is.na(data2$CONTRIBUTING.FACTOR.VEHICLE.1),]
 
 x$NUMBER.OF.PERSONS.F = x$NUMBER.OF.PERSONS.KILLED + x$NUMBER.OF.PERSONS.INJURED
 
 x <- x %>% group_by(CONTRIBUTING.FACTOR.VEHICLE.1) %>% 
-    summarise(NUMBER.OF.PERSONS.F = sum(NUMBER.OF.PERSONS.F),.groups = 'drop')
+    summarise(NUMBER.OF.PERSONS.TOT.HURT = sum(NUMBER.OF.PERSONS.TOT.HURT),.groups = 'drop')
 
-x <- x[order(-x$NUMBER.OF.PERSONS.F),]
+x <- x[order(-x$NUMBER.OF.PERSONS.TOT.HURT),]
 head(x)
 ```
+
+To view the leading contributors in the most accident prone areas, we make the following transformation.
 
 ```{r}
 x <- data2[!is.na(data2$CONTRIBUTING.FACTOR.VEHICLE.1),]
@@ -234,12 +256,16 @@ fulldata <- data.frame(fulldata)
 head(fulldata)
 ```
 
+We make the following transformations to view vehicle types are involved in the maximum number of fatal accidents.
+
 ```{r}
 counts <- data2 %>% drop_na(VEHICLE.TYPE.CODE.1) %>% group_by(VEHICLE.TYPE.CODE.1) %>% summarize(Count = n()) %>% arrange(desc(Count))
 counts <- head(counts,20)
 counts$Count <- counts$Count/1000
 head(counts)
 ```
+
+To see which of these vehicles cause the highest number of fatalities we make the transformations given below.
 
 ```{r}
 x <- data2[!is.na(data2$VEHICLE.TYPE.CODE.1),]
