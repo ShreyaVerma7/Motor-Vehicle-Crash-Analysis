@@ -28,7 +28,7 @@ crash<-crash[ order(crash$CRASH.TIME , decreasing = FALSE ),]
 crash$CRASH.TIME.hr.range <- hour(crash$CRASH.TIME)
 head(crash)
 ```
-We used the dataframe above to create a bar chart for the percentage of fatal accidents.
+We used the dataframe below to create a bar chart for the percentage of fatal accidents.
 
 ```{r}
 a<-crash%>%group_by(CRASH.TIME.hr.range)%>%count()
